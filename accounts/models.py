@@ -14,10 +14,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('Vendor', 'Vendor')
     )
 
-    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False, unique=True) 
-    username = models.CharField(max_length=100)
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False, unique=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    username = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(unique=True)
     profile = models.FileField(upload_to='profile/', default='profile/default_profile.jpg')
+    phone = models.CharField(max_length=15)
     email_token = models.CharField(max_length=100, null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     user_type = models.CharField(max_length=50, choices=USER_TYPE)
@@ -37,11 +40,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 def send_email_token(sender, instance, created, **kwargs):
     try:
         if created:
-            token = str(uuid.uuid4)
-            user = User.objects.get(uid = instance.uid)
-            user.email_token = token
-            user.save()
-            email = user.email
+            token = str(uuid.uuid4())
+            instance.email_token = token
+            instance.save()
+            email = instance.email
             send_account_activation_email(email, token)
     except Exception as e:
         print(e)
