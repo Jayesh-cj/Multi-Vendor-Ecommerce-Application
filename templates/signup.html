@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 
 {% block signup %}
 <section class="section-conten" style="min-height:84vh">
@@ -7,7 +7,7 @@
     <div class="card mx-auto" style="max-width: 380px; margin-top: 50px;">
         <div class="card-body">
             <h4 class="card-title mb-4">Sign up</h4>
-            {% include "alert.html" %}
+            {% include "base/alert.html" %}
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 

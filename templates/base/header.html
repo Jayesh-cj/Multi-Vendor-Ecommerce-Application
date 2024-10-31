@@ -1,0 +1,149 @@
+{% load static %}
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title>Website title - bootstrap html template</title>
+
+<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+
+<!-- jQuery -->
+<script src=" {% static 'js/jquery-2.0.0.min.js' %} " type="text/javascript"></script>
+
+<!-- Bootstrap4 files-->
+<script src=" {% static 'js/bootstrap.bundle.min.js' %} " type="text/javascript"></script>
+<link href=" {% static 'css/bootstrap.css' %} " rel="stylesheet" type="text/css" />
+
+<!-- Font awesome 5 -->
+<link href=" {% static 'fonts/fontawesome/css/all.min.css' %} " type="text/css" rel="stylesheet">
+
+<!-- custom style -->
+<link href=" {% static 'css/ui.css' %} " rel="stylesheet" type="text/css" />
+<link href=" {% static 'css/responsive.css' %} " rel="stylesheet" />
+
+<style>
+    /* Initially hide the span */
+    .icon-hint {
+        display: none;
+        position: absolute;
+        /* Position it to place it relative to the icon */
+        background-color: rgba(0, 0, 0, 0.7);
+        /* Dark background */
+        color: #fff;
+        /* White text */
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        top: 100%;
+        /* Position below the icon */
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        z-index: 1;
+    }
+
+    /* Show the span when hovering over .icon */
+    .widget-header:hover .icon-hint {
+        display: inline-block;
+    }
+
+    /* Add some hover effect on the icon */
+    .icon:hover {
+        background-color: #f0f0f0;
+        /* Light background color */
+        border-color: #ddd;
+        /* Light border */
+        transition: 0.3s;
+        /* Smooth transition */
+    }
+</style>
+
+</html>
+
+<body>
+    <header class="section-header">
+
+
+
+        <section class="header-main border-bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-2 col-4">
+                        <div class="brand-wrap">
+                            <img class="logo" src=" {% static 'images/logo.png' %} ">
+                        </div> <!-- brand-wrap.// -->
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                        <!-- <form action="#" class="search">
+                            <div class="input-group w-100">
+                                <input type="text" class="form-control" placeholder="Search">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form> search-wrap .end// -->
+                    </div>
+                    <div class="col-lg-4 col-sm-6 col-8">
+                        <div class="widgets-wrap float-md-right">
+                            <div class="widget-header  mr-3">
+                                <a href="#" class="icon icon-sm rounded-circle border"><i
+                                        class="fa fa-shopping-bag"></i></a>
+                                <span class="icon-hint">Products</span>
+                            </div>
+                            {% if user.user_type == "Customer" %}
+                            <div class="widget-header  mr-3">
+                                <a href="#" class="icon icon-sm rounded-circle border"><i
+                                        class="fa fa-shopping-cart"></i></a>
+                                <span class="badge badge-pill badge-danger notify">0</span>
+                                <span class="icon-hint">Cart</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="widget-header icontext">
+                                <a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
+                                <span class="icon-hint">Profile</span>
+                                <div class="text">
+                                    <span class="text-muted">Welcome {{user.first_name}} {{user.last_name}}</span>
+                                    {% if user %}
+                                    <div>
+                                        <a href="#">Log out</a>
+                                    </div>
+                                    {% else %}
+                                    <div>
+                                        <a href="{% url 'accounts:login' %}">Sign in</a> |
+                                        <a href="{% url 'accounts:register' %}"> Register</a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div> <!-- widgets-wrap.// -->
+                    </div> <!-- col.// -->
+                </div> <!-- row.// -->
+            </div> <!-- container.// -->
+        </section> <!-- header-main .// -->
+    </header>
+
+    {% block content %}
+
+    {% endblock content %}
+
+    <!-- custom javascript -->
+    <script src=" {% static 'js/script.js' %} " type="text/javascript"></script>
+
+    <script type="text/javascript">
+        /// some script
+
+        // jquery ready start
+        $(document).ready(function () {
+            // jQuery code
+
+        });
+        // jquery end
+    </script>
+</body>
