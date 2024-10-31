@@ -90,13 +90,13 @@
                         </form> search-wrap .end// -->
                     </div>
                     <div class="col-lg-4 col-sm-6 col-8">
-                        <div class="widgets-wrap float-md-right">
+                        <div class="widgets-wrap float-md-right" style="width: max-content;">
                             <div class="widget-header  mr-3">
                                 <a href="#" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-bag"></i></a>
                                 <span class="icon-hint">Products</span>
                             </div>
-                            {% if user.user_type == "Customer" %}
+                            {% if request.user.user_type == "Customer" %}
                             <div class="widget-header  mr-3">
                                 <a href="#" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-cart"></i></a>
@@ -104,15 +104,14 @@
                                 <span class="icon-hint">Cart</span>
                             </div>
                             {% endif %}
-
                             <div class="widget-header icontext">
                                 <a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
                                 <span class="icon-hint">Profile</span>
                                 <div class="text">
-                                    <span class="text-muted">Welcome {{user.first_name}} {{user.last_name}}</span>
-                                    {% if user %}
+                                    <span class="text-muted">Welcome <b>{{user.first_name}} {{user.last_name}}</b></span>
+                                    {% if request.user.is_authenticated %}
                                     <div>
-                                        <a href="#">Log out</a>
+                                        <a href="{% url 'accounts:logout' %}">Log out</a>
                                     </div>
                                     {% else %}
                                     <div>

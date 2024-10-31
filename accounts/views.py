@@ -45,7 +45,7 @@ def register(request):
             messages.success(request=request, message='An verification email has sent to your mail id check it out')
             return HttpResponseRedirect(redirect_to=request.path_info)
         
-    return render(request,'signup.html')
+    return render(request,'authentication/signup.html')
 
 
 def account_activation(request, token, email):
@@ -76,18 +76,27 @@ def account_login(request):
                 messages.warning(request, message='Your account is not verified! Pleasse check your email for verification')
                 return HttpResponseRedirect(redirect_to=request.path_info)
             
-            elif user.is_verified:
+            else:
                 user_auth_obj = authenticate(request, email = email, password = password)
-
                 if user_auth_obj:
                     login(request, user_auth_obj)
-                    return redirect('products:home')
+
+                    if user_auth_obj.user_type == 'Customer':
+                        return redirect('customer:homepage')
+                    elif user_auth_obj.user_type == 'Vendor':
+                        return redirect('vendor:dashboard')
+                
                 else:
-                    messages.warning(request, message='Incorrect password')
+                    messages.warning(request, message='Incorrect password or email')
                     return HttpResponseRedirect(redirect_to=request.path_info)
 
     except User.DoesNotExist:
         messages.warning(request, message='Account not found')
         return HttpResponseRedirect(redirect_to=request.path_info)
 
-    return render(request, 'login.html')
+    return render(request, 'authentication/login.html')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('accounts:login')
