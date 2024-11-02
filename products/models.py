@@ -24,7 +24,7 @@ class ColorVariant(BaseModel):
     price = models.DecimalField(decimal_places=2, max_digits=6, default=0.00)
     
     def __str__(self) -> str:
-        return self.name
+        return f"{self.name} - {self.price}"
     
 
 class SizeVariant(BaseModel):
@@ -58,7 +58,11 @@ class Product(BaseModel):
         self.slug = slugify(self.name)
         if Product.objects.filter(slug = self.slug).exists():
             self.slug = f"{self.slug}-{str(self.uid)[:5]}"
+
+        if self.stock < 1:
+            self.status = 'Inactive'
         return super(Product, self).save(*args, **kwargs)
+    
 
 
 class ProductImages(BaseModel):

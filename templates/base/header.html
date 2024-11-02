@@ -66,9 +66,6 @@
 
 <body>
     <header class="section-header">
-
-
-
         <section class="header-main border-bottom">
             <div class="container">
                 <div class="row align-items-center">
@@ -91,24 +88,38 @@
                     </div>
                     <div class="col-lg-4 col-sm-6 col-8">
                         <div class="widgets-wrap float-md-right" style="width: max-content;">
+                            {% if request.user.user_type == "Customer" %}
                             <div class="widget-header  mr-3">
-                                <a href="#" class="icon icon-sm rounded-circle border"><i
+                                <a href="{% url 'vendor:products' %}" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-bag"></i></a>
                                 <span class="icon-hint">Products</span>
                             </div>
-                            {% if request.user.user_type == "Customer" %}
+
                             <div class="widget-header  mr-3">
                                 <a href="#" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-cart"></i></a>
                                 <span class="badge badge-pill badge-danger notify">0</span>
                                 <span class="icon-hint">Cart</span>
                             </div>
+                            {% else %}
+                            <div class="widget-header  mr-3">
+                                <a href="{% url 'vendor:products' %}" class="icon icon-sm rounded-circle border"><i
+                                        class="fa fa-shopping-bag"></i></a>
+                                <span class="icon-hint">Products</span>
+                            </div>
+
                             {% endif %}
                             <div class="widget-header icontext">
+                                {% if request.user.user_type == "Customer" %}
                                 <a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
                                 <span class="icon-hint">Profile</span>
+                                {% else %}
+                                <a href="{% url 'vendor:homepage' %}" class="icon icon-sm rounded-circle border"><i class="fa fa-home"></i></a>
+                                <span class="icon-hint">Home</span>
+                                {% endif %}
                                 <div class="text">
-                                    <span class="text-muted">Welcome <b>{{user.first_name}} {{user.last_name}}</b></span>
+                                    <span class="text-muted">Welcome <b>{{user.first_name}}
+                                            {{user.last_name}}</b></span>
                                     {% if request.user.is_authenticated %}
                                     <div>
                                         <a href="{% url 'accounts:logout' %}">Log out</a>

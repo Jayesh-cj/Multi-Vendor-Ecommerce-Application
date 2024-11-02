@@ -15,12 +15,11 @@ class Contacts(models.Model):
 
 class Cart(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_cart')
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, related_name='product_cart')
     cupon = models.ForeignKey(Cupon, on_delete=models.SET_NULL, null=True, blank=True, related_name='product_cupon')
     is_paid = models.BooleanField(default=False)
 
     def __str__(self) -> str:
-        return f"{self.user.first_name}'s Cart"
+        return f"{self.user.first_name} {self.user.last_name}'s Cart"
     
 
 class CartItem(BaseModel):

@@ -84,7 +84,7 @@ def account_login(request):
                     if user_auth_obj.user_type == 'Customer':
                         return redirect('customer:homepage')
                     elif user_auth_obj.user_type == 'Vendor':
-                        return redirect('vendor:dashboard')
+                        return redirect('vendor:homepage')
                 
                 else:
                     messages.warning(request, message='Incorrect password or email')
