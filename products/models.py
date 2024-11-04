@@ -21,15 +21,13 @@ class Category(BaseModel):
 
 class ColorVariant(BaseModel):
     name = models.CharField(max_length=100)
-    price = models.DecimalField(decimal_places=2, max_digits=6, default=0.00)
     
     def __str__(self) -> str:
-        return f"{self.name} - {self.price}"
+        return f"{self.name}"
     
 
 class SizeVariant(BaseModel):
     name = models.CharField(max_length=100)
-    price = models.DecimalField(decimal_places=2, max_digits=6, default=0.00)
 
     def __str__(self) -> str:
         return self.name

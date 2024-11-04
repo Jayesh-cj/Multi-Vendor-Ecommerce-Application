@@ -1,0 +1,170 @@
+{% extends "vendor/dashboard.html" %}
+
+{% block options %}
+{% load widget_tweaks %}
+{% load static %}
+
+<div class="container">
+    <h2>Add Product</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Product Form -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Product Details</h5>
+                {% for field in product_form %}
+                <div class="form-group d-flex align-items-center">
+                    {{ field|add_class:"form-control" }}
+
+                    {% if field.name == "category" %}
+                    <!-- Icon to Trigger Category Modal -->
+                    <button type="button" class="btn btn-link p-0 ml-2" data-toggle="modal"
+                        data-target="#addCategoryModal">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                    {% elif field.name == "colors" %}
+                    <!-- Icon to Trigger Color Modal -->
+                    <button type="button" class="btn btn-link p-0 ml-2" data-toggle="modal"
+                        data-target="#addColorModal">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                    {% elif field.name == "sizes" %}
+                    <!-- Icon to Trigger Size Modal -->
+                    <button type="button" class="btn btn-link p-0 ml-2" data-toggle="modal" data-target="#addSizeModal">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                    {% endif %}
+
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Image Formset -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Product Images</h5>
+                <div id="image-formset">
+                    {{ image_formset.management_form }}
+                    {% for form in image_formset %}
+                    <div class="form-group image-form d-flex align-items-center">
+                        {{ form.image|add_class:"form-control mr-2" }}
+                        {{ form.DELETE.as_hidden }}
+                        <button type="button" class="btn btn-danger remove-image p-2">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary p-2" id="add-image">
+                    <i class="fas fa-plus-circle"></i> Add Image
+                </button>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Save Product</button>
+    </form>
+</div>
+
+<!-- Modal for Adding Category -->
+{% include "vendor/add_category.html" %}
+
+<!-- Modal for Adding Color -->
+{% include "vendor/add_colors.html" %}
+
+<!-- Modal for Adding Size -->
+{% include "vendor/add_sizes.html" %}
+
+<script>
+    $(document).ready(function () {
+        const imageFormset = $("#image-formset");
+        const addImageBtn = $("#add-image");
+        const totalFormsInput = $("#id_form-TOTAL_FORMS");
+        let formCount = parseInt(totalFormsInput.val());
+
+        // Function to add a new image form
+        function addImageForm() {
+            // Clone the first form in the formset as a template
+            let newForm = imageFormset.find(".image-form").first().clone();
+            let formRegex = new RegExp(`form-(\\d){1}-`, 'g');
+
+            // Update the new form's fields with the correct index
+            newForm.html(newForm.html().replace(formRegex, `form-${formCount}-`));
+            imageFormset.append(newForm);
+
+            // Clear the file input and increase the form count
+            newForm.find('input[type="file"]').val("");
+            totalFormsInput.val(++formCount);
+
+            // Add event listener for the new remove button
+            newForm.find('.remove-image').on('click', function () {
+                $(this).closest('.image-form').remove();
+                totalFormsInput.val(--formCount);
+            });
+        }
+
+        // Event listener to add a new form when "Add Image" is clicked
+        addImageBtn.on("click", addImageForm);
+
+        // Set up remove buttons on initial forms
+        imageFormset.find('.remove-image').on('click', function () {
+            $(this).closest('.image-form').remove();
+            totalFormsInput.val(--formCount);
+        });
+
+        // AJAX form submissions for each modal
+        $('#add-category-form').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function () {
+                    $('#addCategoryModal').modal('hide');
+                    alert("Category added successfully!");
+                },
+                error: function () {
+                    alert("Error adding category.");
+                }
+            });
+        });
+
+        $('#add-color-form').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function () {
+                    $('#addColorModal').modal('hide');
+                    alert("Color added successfully!");
+                },
+                error: function () {
+                    alert("Error adding color.");
+                }
+            });
+        });
+
+        $('#add-size-form').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function () {
+                    $('#addSizeModal').modal('hide');
+                    alert("Size added successfully!");
+                },
+                error: function () {
+                    alert("Error adding size.");
+                }
+            });
+        });
+    });
+
+</script>
+
+{% endblock options %}

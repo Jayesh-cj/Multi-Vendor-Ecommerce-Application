@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     'accounts',
     'vendor',
     'customer', 
-    'products'
+    'products',
+
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
