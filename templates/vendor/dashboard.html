@@ -4,6 +4,14 @@
 {% load static %}
 
 <style>
+    .main-content {
+        height: 100vh;
+        overflow-y: scroll;
+    }
+
+    .main-content::-webkit-scrollbar {
+        display: none;
+    }
     /* Vendor Details Styling */
     .vendor-details {
         background-color: #f7f7f7;
@@ -32,8 +40,19 @@
         text-decoration: none;
         color: black;
     }
+
+    .sidebar {
+        height: 100vh;
+        overflow-y: scroll;
+    }
+
+    .sidebar::-webkit-scrollbar{
+        display: none;
+    }
 </style>
+
 <link rel="stylesheet" href="{% static '/css/vendor-dashboard.css' %}">
+
 <section class="dashboard-bg">
     <div class="sidebar" style="width: 320px;">
         <div class="profile">
@@ -53,6 +72,7 @@
                     <li>2</li>
                     <li>4</li>
                     <li>5</li>
+                    <br>
                 </ul>
             </div>
         </div>

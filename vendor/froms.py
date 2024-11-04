@@ -44,26 +44,21 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         exclude = ['uid', 'vendor', 'slug']
-        colors = forms.ModelMultipleChoiceField(
-            queryset=ColorVariant.objects.all(),
-            required = False,
-            # widgets = {
-            #     'colors' : forms.SelectMultiple(attrs={
-            #         'class' : 'form-control'
-            # })}
-        )
-        sizes = forms.ModelMultipleChoiceField(
-            queryset=SizeVariant.objects.all(),
-            required = False,
-            # widgets = {
-            #     'sizes' : forms.CheckboxSelectMultiple(attrs={
-            #         'class' : 'form-control'
-            # })}
-        )
+
         widgets = {
             'category' : forms.Select(attrs={
                 'class' : 'form-control',
             }),
+            'colors' : forms.SelectMultiple(attrs = {
+                    'class' : 'form-control',
+                },
+                choices=ColorVariant.objects.all(),
+            ),
+            'sizes' : forms.SelectMultiple(attrs={
+                'class' : 'form-control',
+                },
+                choices=SizeVariant.objects.all()
+            ),
             'name' : forms.TextInput(attrs={
                 'class' : 'form-control',
                 'placeholder' : 'Product Name',
@@ -79,9 +74,6 @@ class ProductForm(forms.ModelForm):
                 'placeholder' : 'Product Price'
             }),
             'stock' : forms.NumberInput(attrs={
-                'class' : 'form-control'
-            }),
-            'status' : forms.Select(attrs={
                 'class' : 'form-control'
             })
         }

@@ -47,7 +47,6 @@ class Product(BaseModel):
     slug = models.SlugField(null=True, blank=True, unique=True)
     price = models.DecimalField(decimal_places=2, max_digits=8)
     stock = models.IntegerField(default=1)
-    status = models.CharField(max_length=100, choices=PRODUCT_STATUS, default='Active')
 
     def __str__(self) -> str:
         return self.name

@@ -3,9 +3,18 @@
 {% block options %}
 {% load widget_tweaks %}
 {% load static %}
+<style>
+    .show {
+        display: block !important;
+    }
+
+    .hide {
+        display: none !important;
+    }
+</style>
 
 <div class="container">
-    <h2>Add Product</h2>
+    <h2 align="center"><b>Add Product</b></h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
@@ -14,8 +23,8 @@
             <div class="card-body">
                 <h5 class="card-title">Product Details</h5>
                 {% for field in product_form %}
-                <div class="form-group d-flex align-items-center">
-                    {{ field|add_class:"form-control" }}
+                <div class="form-group d-flex align-items-center" id={{field.name}}-container>
+                    {{ field }}
 
                     {% if field.name == "category" %}
                     <!-- Icon to Trigger Category Modal -->
@@ -65,7 +74,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Save Product</button>
+        <button type="submit" class="btn btn-primary btn-block">Save Product</button>
     </form>
 </div>
 
@@ -83,7 +92,43 @@
         const imageFormset = $("#image-formset");
         const addImageBtn = $("#add-image");
         const totalFormsInput = $("#id_form-TOTAL_FORMS");
+        const categoryField = $("#id_category");
+        const sizesContainer = $("#sizes-container");
         let formCount = parseInt(totalFormsInput.val());
+
+        // UUID for "Clothes" category (replace with actual UUID from your backend)
+        const clothesCategoryUUID = "16aa36c4-2832-4361-86bd-505bee4dc16f";
+
+        if (!categoryField.length) {
+            console.error("Category field not found. Check the ID selector.");
+            return;
+        }
+
+        if (!sizesContainer.length) {
+            console.error("Sizes form section not found. Check the ID selector.");
+            return;
+        }
+
+        // Function to show/hide the Sizes input based on category selection
+        function toggleSizesInput() {
+            if (categoryField.val() === clothesCategoryUUID) {
+                sizesContainer.addClass('d-flex')
+                sizesContainer.show();
+                console.log(categoryField.val());
+                console.log("cliked");
+                
+                
+            } else {
+                sizesContainer.removeClass('d-flex')
+                sizesContainer.hide();
+            }
+        }
+
+        // Event listener to check category selection on change
+        categoryField.on("change", toggleSizesInput);
+
+        // Initial check in case the form is loaded with "Clothes" pre-selected
+        toggleSizesInput();
 
         // Function to add a new image form
         function addImageForm() {
