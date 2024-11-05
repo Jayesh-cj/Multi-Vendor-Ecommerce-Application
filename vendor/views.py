@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django import forms
 
@@ -57,3 +58,20 @@ def add_product(request):
         'product_form': product_form,
         'image_formset': image_formset,
     })
+
+
+def add_category(request):
+    form = CategoryForm(request.POST, request.FILES)
+    if form.is_valid():
+        category = form.save()
+        print(category.uid)
+        return JsonResponse({
+            'id': category.uid,
+            'name': category.name
+        }, status=200)
+    
+    else:
+        return JsonResponse({
+            'error' : 'Error adding category.'
+        }, status = 400)
+    return redirect('vendor:add_category')

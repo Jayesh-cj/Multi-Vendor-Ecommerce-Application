@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="add-category-form" method="post" action="#">
+                <form id="add-category-form" method="post" enctype="multipart/form-data" action=" {% url 'vendor:add_category' %} ">
                     {% csrf_token %}
                     <div class="form-group">
                         {{ category_form.as_div }}

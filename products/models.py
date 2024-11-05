@@ -1,3 +1,4 @@
+from typing import Iterable
 from django.db import models
 from django.utils.text import slugify
 from base.models import BaseModel
@@ -18,6 +19,27 @@ class Category(BaseModel):
             self.slug = f"{self.slug}-{str(self.uid)[:5]}"
         return super(Category, self).save(*args, **Kwargs)
     
+    class Meta:
+        ordering = ['name']
+    
+
+class SubCategory(BaseModel):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='_category')
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(null=True, blank=True, unique=True)
+
+    def __str__(self) -> str:
+        return self.name
+    
+    def save(self, *args, **kwargs) -> None:
+        self.slug = slugify(self.name)
+        if SubCategory.objects.filter(slug = self.slug).exists():
+            self.slug = f"{self.slug}-{str(self.uid)[:5]}"
+        return super(SubCategory, self).save(*args, **kwargs)
+    
+    class Meta:
+        ordering = ['name']
+
 
 class ColorVariant(BaseModel):
     name = models.CharField(max_length=100)
