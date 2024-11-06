@@ -97,7 +97,7 @@
         let formCount = parseInt(totalFormsInput.val());
 
         // UUID for "Clothes" category (replace with actual UUID from your backend)
-        const clothesCategoryUUID = "16aa36c4-2832-4361-86bd-505bee4dc16f";
+        const clothesCategoryUUID = "c486eaa9-d482-4316-9212-cd48efd00859";
 
         if (!categoryField.length) {
             console.error("Category field not found. Check the ID selector.");
@@ -175,9 +175,6 @@
                 success: function (data) {
                     $('#addCategoryModal .close').click();  // Simulates clicking the close button
                     alert("Category added successfully!");
-                    console.log(data);
-                    console.log(data.id);
-                    console.log(data.name);
 
                     $('#id_category').append(new Option(data.name, data.id));
 
@@ -197,32 +194,58 @@
 
         $('#add-color-form').on('submit', function (e) {
             e.preventDefault();
+
+            var formData = new FormData(this);
+
             $.ajax({
                 url: $(this).attr('action'),
                 method: $(this).attr('method'),
-                data: $(this).serialize(),
-                success: function () {
-                    $('#addColorModal').modal('hide');
+                data: formData,
+                processData : false,
+                contentType : false,
+                success: function (data) {
+                    $('#addColorModal .close').click();
                     alert("Color added successfully!");
+                    
+                    var name = data.name
+                    $('#id_colors').append(new Option(name.toLowerCase(), data.id));
                 },
-                error: function () {
-                    alert("Error adding color.");
+                error: function (xhr) {
+                    const errors = xhr.responseJSON.errors;
+                    let errorMessages = "";
+                    for (const field in errors) {
+                        errorMessages += errors[field].join(", ") + "\n";
+                    }
+                    alert("Error adding color:\n" + errorMessages);
                 }
             });
         });
-
+        
         $('#add-size-form').on('submit', function (e) {
             e.preventDefault();
+            
+            var formData = new FormData(this);
+            
             $.ajax({
                 url: $(this).attr('action'),
                 method: $(this).attr('method'),
-                data: $(this).serialize(),
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function () {
-                    $('#addSizeModal').modal('hide');
+                    $('#addSizeModal .close').click();
                     alert("Size added successfully!");
+                    
+                    let name = data.name
+                    $('#id_sizes').append(new Option(name.toUpperCase(), data.id));
                 },
-                error: function () {
-                    alert("Error adding size.");
+                error: function (xhr) {
+                    const errors = xhr.responseJSON.errors;
+                    let errorMessages = "";
+                    for (const field in errors) {
+                        errorMessages += errors[field].join(", ") + "\n";
+                    }
+                    alert("Error adding color:\n" + errorMessages);
                 }
             });
         });

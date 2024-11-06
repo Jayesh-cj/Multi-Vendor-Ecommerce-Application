@@ -3,109 +3,62 @@
 {% block options %}
 <div class="card" style="background-color: #e9f5f545;">
     <div class="card-body border-bottom">
-        <a href="{% url 'vendor:add_product' %}" class="btn btn-primary float-md-right"> Add Product <i class="fa fa-chevron-right"></i> </a>
+        <a href="{% url 'vendor:add_product' %}" class="btn btn-primary float-md-right"> Add Product <i
+                class="fa fa-chevron-right"></i> </a>
     </div>
 
     <table class="table table-borderless table-shopping-cart">
         <thead class="text-muted">
             <tr class="small text-uppercase">
                 <th scope="col">Product</th>
-                <th scope="col" width="120">Quantity</th>
+                <th scope="col" width="120">Stock</th>
                 <th scope="col" width="120">Price</th>
-                <th scope="col" class="text-right" width="200"> </th>
+                <th scope="col" width="200">Category </th>
             </tr>
         </thead>
         <tbody>
+            {% for product in products %}
             <tr>
                 <td>
                     <figure class="itemside">
-                        <div class="aside"><img src="images/items/1.jpg" class="img-sm"></div>
+                        <div class="aside">
+                            {% if product.product_images.all %}
+                            <img src="{{ product.product_images.all.0.image.url }}" class="img-md">
+                            {% endif %}
+                        </div>
                         <figcaption class="info">
-                            <a href="#" class="title text-dark">Some name of item goes here nice</a>
-                            <p class="text-muted small">Size: XL, Color: blue, <br> Brand: Gucci</p>
+                            <a href="#"><h5>{{ product.name }}</h5></a>
+                            <a href="#" class="title text-dark">{{ product.description|truncatechars:50 }}</a>
+                            <p class="text-muted small">Sizes : 
+                                {% for size in product.sizes.all %}
+                                    {{ size.name }},
+                                {% endfor %} <br> Colors :
+                                {% for color in product.colors.all %}
+                                    {{ color.name }},
+                                {% endfor %}
+                                </p>
                         </figcaption>
                     </figure>
                 </td>
                 <td>
-                    <select class="form-control">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                    </select>
+                    <h4>{{ product.stock }}</h4>
                 </td>
                 <td>
                     <div class="price-wrap">
-                        <var class="price">$1156.00</var>
-                        <small class="text-muted"> $315.20 each </small>
+                        <var class="price">{{ product.price }}</var>
                     </div> <!-- price-wrap .// -->
-                </td>
-                <td class="text-right">
-                    <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-light"
-                        data-toggle="tooltip"> <i class="fa fa-heart"></i></a>
-                    <a href="" class="btn btn-light"> Remove</a>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <figure class="itemside">
-                        <div class="aside"><img src="images/items/2.jpg" class="img-sm"></div>
-                        <figcaption class="info">
-                            <a href="#" class="title text-dark">Product name goes here nice</a>
-                            <p class="text-muted small">Size: XL, Color: blue, <br> Brand: Gucci</p>
-                        </figcaption>
-                    </figure>
-                </td>
-                <td>
-                    <select class="form-control">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                    </select>
                 </td>
                 <td>
                     <div class="price-wrap">
-                        <var class="price">$149.97</var>
-                        <small class="text-muted"> $75.00 each </small>
-                    </div> <!-- price-wrap .// -->
+                        <var class="price">{{ product.category.name }}</var>
+                    </div>
                 </td>
                 <td class="text-right">
                     <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-light"
-                        data-toggle="tooltip"> <i class="fa fa-heart"></i></a>
-                    <a href="" class="btn btn-light btn-round"> Remove</a>
+                        data-toggle="tooltip"> <i class="fa fa-trash"></i></a>
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <figure class="itemside">
-                        <div class="aside"><img src="images/items/3.jpg" class="img-sm"></div>
-                        <figcaption class="info">
-                            <a href="#" class="title text-dark">Another name of some product goes
-                                just here as a demo text </a>
-                            <p class="small text-muted">Size: XL, Color: blue, Brand: Tissot</p>
-                        </figcaption>
-                    </figure>
-                </td>
-                <td>
-                    <select class="form-control">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </select>
-                </td>
-                <td>
-                    <div class="price-wrap">
-                        <var class="price">$98.00</var>
-                        <small class="text-muted"> $578.00 each</small>
-                    </div> <!-- price-wrap .// -->
-                </td>
-                <td class="text-right">
-                    <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-light"
-                        data-toggle="tooltip"> <i class="fa fa-heart"></i></a>
-                    <a href="" class="btn btn-light btn-round"> Remove</a>
-                </td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="add-color-form" method="post" action="#">
+                <form id="add-color-form" method="post" action="{% url 'vendor:add_color' %}">
                     {% csrf_token %}
                     <div class="form-group">
                         {{color_form.as_div}}

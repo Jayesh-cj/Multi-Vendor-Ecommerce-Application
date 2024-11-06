@@ -14,32 +14,14 @@ class Category(BaseModel):
         return self.name
     
     def save(self, *args, **Kwargs) -> None:
-        self.slug = slugify(self.name)
-        if Category.objects.filter(slug = self.slug).exists():
+        if not self.slug:
+            self.slug = slugify(self.name)
             self.slug = f"{self.slug}-{str(self.uid)[:5]}"
         return super(Category, self).save(*args, **Kwargs)
     
     class Meta:
         ordering = ['name']
-    
-
-class SubCategory(BaseModel):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='_category')
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(null=True, blank=True, unique=True)
-
-    def __str__(self) -> str:
-        return self.name
-    
-    def save(self, *args, **kwargs) -> None:
-        self.slug = slugify(self.name)
-        if SubCategory.objects.filter(slug = self.slug).exists():
-            self.slug = f"{self.slug}-{str(self.uid)[:5]}"
-        return super(SubCategory, self).save(*args, **kwargs)
-    
-    class Meta:
-        ordering = ['name']
-
+        
 
 class ColorVariant(BaseModel):
     name = models.CharField(max_length=100)
@@ -47,6 +29,8 @@ class ColorVariant(BaseModel):
     def __str__(self) -> str:
         return f"{self.name}"
     
+    class Meta:
+        ordering = ['name']
 
 class SizeVariant(BaseModel):
     name = models.CharField(max_length=100)
@@ -56,11 +40,7 @@ class SizeVariant(BaseModel):
     
 
 class Product(BaseModel):
-    PRODUCT_STATUS = (
-        ('Active', 'Active'),
-        ('Inactive', 'Inactive')
-    )
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_category')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='_category')
     vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_vendor')
     colors = models.ManyToManyField(ColorVariant, blank=True)
     sizes = models.ManyToManyField(SizeVariant, blank=True)
@@ -74,15 +54,12 @@ class Product(BaseModel):
         return self.name
     
     def save(self, *args, **kwargs) -> None:
-        self.slug = slugify(self.name)
-        if Product.objects.filter(slug = self.slug).exists():
-            self.slug = f"{self.slug}-{str(self.uid)[:5]}"
-
-        if self.stock < 1:
-            self.status = 'Inactive'
-        return super(Product, self).save(*args, **kwargs)
-    
-
+        if not self.slug:
+            self.slug = slugify(self.name)
+            if Product.objects.filter(slug = self.slug).exists():
+                self.slug = f"{self.slug}-{str(self.uid)[:5]}"
+        return super(Product, self).save(*args, **kwargs)  
+          
 
 class ProductImages(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')

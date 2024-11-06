@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block options %}
+<style>
+
+</style>
+
 <div class="card-container">
     <div class="card">
         <h3>Profit</h3>
@@ -12,9 +16,12 @@
         <p>120</p>
     </div>
     <div class="card">
-        <h3>Products</h3>
-        <p>50</p>
+        <a href="{% url 'vendor:products' %}">
+            <h3>Products</h3>
+        </a>
+        <p>{{ product_count }}</p>
     </div>
+    
     <!-- <div class="card">
             <h3>Revenue</h3>
             <p>$15,000</p>

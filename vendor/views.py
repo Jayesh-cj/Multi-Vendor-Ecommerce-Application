@@ -14,12 +14,20 @@ def homepage(request):
     except Exception as e:
         print(e)
     return render(request,'vendor/homepage.html',{
-        'vendor' : vendor
+        'vendor' : vendor,
+        'product_count': vendor.product_vendor.count()
     })
 
 
 def view_products(request):
-    return render(request, 'vendor/products.html')
+    try:
+        products = Product.objects.filter(vendor = request.user)
+        return render(request, 'vendor/products.html', {
+            'products' : products
+        })
+    except Exception as e:
+        print(e)
+        return render(request, 'vendor/products.html')
 
 
 def add_product(request):
@@ -46,7 +54,7 @@ def add_product(request):
                     image.product = product
                     image.save()
                     
-            return redirect('product_list')  # Redirect to desired view
+            return redirect('vendor:products')  # Redirect to desired view
     else:
         product_form = ProductForm()
         image_formset = ImageFormSet(queryset=ProductImages.objects.none())
@@ -64,7 +72,6 @@ def add_category(request):
     form = CategoryForm(request.POST, request.FILES)
     if form.is_valid():
         category = form.save()
-        print(category.uid)
         return JsonResponse({
             'id': category.uid,
             'name': category.name
@@ -75,3 +82,35 @@ def add_category(request):
             'error' : 'Error adding category.'
         }, status = 400)
     return redirect('vendor:add_category')
+
+
+def add_color_variant(request):
+    form = ColorVariantForm(request.POST)
+    if form.is_valid():
+        color_name = form['name'].value()
+        color = ColorVariant.objects.create(name = color_name.lower())
+        
+        return JsonResponse({
+            'id' : color.uid,
+            'name' : color.name
+        },status = 200)
+    else:
+        return JsonResponse({
+            'error' : "Error adding color."
+        }, status = 400)
+    
+
+def add_size_variant(request):
+    form = SizeVariantForm(request.POST)
+    if form.is_valid():
+        size_name = form['name'].value()
+        size = SizeVariant.objects.create(name = size_name.upper())
+
+        return JsonResponse({
+            'id' : size.uid,
+            'name' : size.name
+        }, status = 200)
+    else:
+        return JsonResponse({
+            'error' : "Error addig size."
+        }, status = 400)

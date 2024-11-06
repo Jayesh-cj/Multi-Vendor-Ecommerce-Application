@@ -18,7 +18,7 @@ class CategoryForm(forms.ModelForm):
 
 class ColorVariantForm(forms.ModelForm):
     class Meta:
-        model = Category
+        model = ColorVariant
         fields = ['name']
         widgets = {
             'name' : forms.TextInput(attrs={
@@ -30,7 +30,7 @@ class ColorVariantForm(forms.ModelForm):
 
 class SizeVariantForm(forms.ModelForm):
     class Meta:
-        model = Category
+        model = SizeVariant
         fields = ['name']
         widgets = {
             'name' : forms.TextInput(attrs={
@@ -52,12 +52,12 @@ class ProductForm(forms.ModelForm):
             'colors' : forms.SelectMultiple(attrs = {
                     'class' : 'form-control',
                 },
-                choices=ColorVariant.objects.all(),
+                choices=ColorVariant.objects.all().order_by('name'),
             ),
             'sizes' : forms.SelectMultiple(attrs={
                 'class' : 'form-control',
                 },
-                choices=SizeVariant.objects.all()
+                choices=SizeVariant.objects.all().order_by('name')
             ),
             'name' : forms.TextInput(attrs={
                 'class' : 'form-control',

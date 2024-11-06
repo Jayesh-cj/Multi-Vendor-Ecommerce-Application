@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="add-size-form" method="post" action="#">
+                <form id="add-size-form" method="post" action="{% url 'vendor:add_size' %}">
                     {% csrf_token %}
                     <div class="form-group">
                         {{size_form.as_div}}
