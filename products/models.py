@@ -44,9 +44,9 @@ class Product(BaseModel):
     vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_vendor')
     colors = models.ManyToManyField(ColorVariant, blank=True)
     sizes = models.ManyToManyField(SizeVariant, blank=True)
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200)
-    slug = models.SlugField(null=True, blank=True, unique=True)
+    name = models.CharField(max_length=300)
+    description = models.CharField(max_length=1000)
+    slug = models.SlugField(null=True, blank=True, unique=True, max_length=300)
     price = models.DecimalField(decimal_places=2, max_digits=8)
     stock = models.IntegerField(default=1)
 

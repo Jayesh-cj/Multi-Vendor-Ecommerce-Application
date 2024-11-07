@@ -1,4 +1,41 @@
 {% extends "base/header.html" %}
 {% block content %}
-  
+
+<!-- Navbar for categories -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <ul class="navbar-nav">
+            {% for category in categories %}
+                <li class="nav-item mr-4">
+                    <a class="nav-link" href="#">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="" width="50" height="50" class="mr-4" ><br>
+                            {{ category }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
+
+<!-- Product Grid -->
+<div class="container mt-5 pt-5">
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3">
+            <figure class="card card-product-grid">
+                <div class="img-wrap"> 
+                    <img src="{{ product.product_images.all.0.image.url }}">
+                </div>
+                <figcaption class="info-wrap border-top">
+                    <a href="#" class="title">{{ product.name }}</a>
+                    <div class="price mt-2">${{ product.price }}</div> <!-- price-wrap.// -->
+                </figcaption>
+            </figure> <!-- card // -->
+        </div> <!-- col.// -->
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock content %}

@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django import forms
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from accounts.models import User
 from products.models import ProductImages
@@ -8,6 +10,7 @@ from products.models import ProductImages
 from vendor.froms import *
 
 # Create your views here.
+@login_required()
 def homepage(request):
     try:
         vendor = User.objects.get(uid = request.user.uid)
@@ -114,3 +117,9 @@ def add_size_variant(request):
         return JsonResponse({
             'error' : "Error addig size."
         }, status = 400)
+    
+
+def delete_product(request, slug):
+    Product.objects.get(slug = slug).delete()
+    messages.success(request, message="Product deleted.")
+    return redirect('vendor:products')

@@ -1,6 +1,10 @@
 {% extends "vendor/dashboard.html" %}
 
 {% block options %}
+{% include "base/alert.html" %}
+<style>
+
+</style>
 <div class="card" style="background-color: #e9f5f545;">
     <div class="card-body border-bottom">
         <a href="{% url 'vendor:add_product' %}" class="btn btn-primary float-md-right"> Add Product <i
@@ -18,7 +22,7 @@
         </thead>
         <tbody>
             {% for product in products %}
-            <tr>
+            <tr class="border-bottom">
                 <td>
                     <figure class="itemside">
                         <div class="aside">
@@ -54,7 +58,7 @@
                     </div>
                 </td>
                 <td class="text-right">
-                    <a data-original-title="Save to Wishlist" title="" href="" class="btn btn-light"
+                    <a data-original-title="Save to Wishlist" title="" href="{% url 'vendor:delete_product' product.slug %}" class="btn btn-light"
                         data-toggle="tooltip"> <i class="fa fa-trash"></i></a>
                 </td>
             </tr>

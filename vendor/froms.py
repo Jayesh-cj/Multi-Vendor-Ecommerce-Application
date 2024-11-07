@@ -67,7 +67,7 @@ class ProductForm(forms.ModelForm):
             'description' : forms.Textarea(attrs={
                 'class' : 'form-control',
                 'rows' : 5,
-                'placeholder' : 'Product Description...'
+                'placeholder' : 'Product Description...',
             }),
             'price' : forms.NumberInput(attrs={
                 'class' : 'form-control',
