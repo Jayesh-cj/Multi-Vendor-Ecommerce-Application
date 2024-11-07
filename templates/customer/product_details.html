@@ -1,0 +1,154 @@
+{% extends "base/header.html" %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container">
+
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <div class="card">
+            <div class="row no-gutters">
+                <aside class="col-md-6">
+                    <article class="gallery-wrap">
+                        <div class="img-big-wrap">
+                            <div>
+                                <a href="#"><img id="mainImage" class="mt-4"
+                                        src="{{ product.product_images.all.first.image.url }}"></a>
+                            </div>
+                        </div> <!-- slider-product.// -->
+
+                        <div class="thumbs-wrap mb-3">
+                            {% for image in product.product_images.all %}
+                            <img class="item-thumb" src="{{ image.image.url }}" data-src="{{ image.image.url }}">
+                            {% endfor %}
+                        </div> <!-- slider-nav.// -->
+                    </article> <!-- gallery-wrap .end// -->
+                </aside>
+
+                <main class="col-md-6 border-left">
+                    <article class="content-body">
+
+                        <h2 class="title">{{ product.name }}</h2>
+
+                        <div class="rating-wrap my-3">
+                            <small class="label-rating text-muted">Seller : {{ product.vendor.first_name }} {{product.vendor.last_name }}</small><br>
+                            <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i> {{ product.stock }} products left</small>
+                        </div> <!-- rating-wrap.// -->
+
+                        <div class="mb-3">
+                            <var class="price h4">${{ product.price }}</var>
+                            <span class="text-muted">/per pice</span>
+                        </div> <!-- price-detail-wrap .// -->
+
+                        <p>{{ product.description }}</p>
+
+                        <hr>
+                        <div class="form-row">
+                            <div class="form-group col-md flex-grow-0">
+                                <label>Quantity</label>
+                                <div class="input-group mb-3 input-spinner">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-light" type="button" id="button-plus"> + </button>
+                                    </div>
+                                    <input type="text" class="form-control" id="quantity" value="1" >
+                                    <div class="input-group-append">
+                                        <button class="btn btn-light" type="button" id="button-minus"> − </button>
+                                    </div>
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+
+                       {% if product.sizes.all %}
+                        <div class="form-row">
+                            <div class="form-group col-md">
+                                <label>Select Size</label>
+                                <div class="mt-1">
+                                    {% for size in product.sizes.all %}
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" name="select_size" value="{{ size }}"
+                                            class="custom-control-input">
+                                        <div class="custom-control-label">{{ size.name }}</div>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div> <!-- col.// -->
+                        </div>
+                        {% endif %}
+
+                        {% if product.colors.all %}
+                        <div class="form-row">
+                            <div class="form-group col-md">
+                                <label>Select Color</label>
+                                <div class="mt-1">
+                                    {% for color in product.colors.all %}
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" name="select_size" valu="{{ color }}"
+                                            class="custom-control-input">
+                                        <div class="custom-control-label">
+                                            <div style="width: 25px; height: 25px; background-color: {{ color.name }};">
+                                            </div>
+                                        </div>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div> <!-- col.// -->
+                        </div>
+                        {% endif %}
+
+                        <a href="#" class="btn  btn-primary"> Buy now </a>
+                        <a href="#" class="btn  btn-outline-primary"> <span class="text">Add to cart</span> <i
+                                class="fas fa-shopping-cart"></i> </a>
+                    </article> <!-- product-info-aside .// -->
+                </main> <!-- col.// -->
+            </div> <!-- row.// -->
+        </div> <!-- card.// -->
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+    </div>
+
+    <br>
+    <!-- Related Products -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            {% for product in related_products %}
+            <div class="col-md-3">
+                <figure class="card card-product-grid">
+                    <div class="img-wrap"> 
+                        <img src="{{ product.product_images.all.first.image.url }}">
+                    </div>
+                    <figcaption class="info-wrap border-top">
+                        <a href="{% url 'customer:product' product.slug %}" class="title">{{ product.name }}</a>
+                        <div class="price mt-2">${{ product.price }}</div> <!-- price-wrap.// -->
+                    </figcaption>
+                </figure> <!-- card // -->
+            </div> <!-- col.// -->
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+        $('.item-thumb').hover(function () {
+            const newSrc = $(this).data('src');
+            $('#mainImage').attr('src', newSrc);
+        });
+    });
+
+    // Quanity button 
+    const maxQuantity = Math.min(5, {{ product.stock }});
+
+    $('#button-plus').click(function() {
+        let quantity = parseInt($('#quantity').val());
+        if (quantity < maxQuantity) {
+            $('#quantity').val(quantity + 1);
+        }
+    });
+
+    $('#button-minus').click(function() {
+        let quantity = parseInt($('#quantity').val());
+        if (quantity > 1) {
+            $('#quantity').val(quantity - 1);
+        }
+    });
+</script>
+
+{% endblock content %}

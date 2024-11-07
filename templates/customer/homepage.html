@@ -26,10 +26,10 @@
         <div class="col-md-3">
             <figure class="card card-product-grid">
                 <div class="img-wrap"> 
-                    <img src="{{ product.product_images.all.0.image.url }}">
+                    <img src="{{ product.product_images.all.first.image.url }}">
                 </div>
                 <figcaption class="info-wrap border-top">
-                    <a href="#" class="title">{{ product.name }}</a>
+                    <a href="{% url 'customer:product' product.slug %}" class="title">{{ product.name }}</a>
                     <div class="price mt-2">${{ product.price }}</div> <!-- price-wrap.// -->
                 </figcaption>
             </figure> <!-- card // -->
