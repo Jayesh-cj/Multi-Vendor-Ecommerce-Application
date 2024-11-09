@@ -23,6 +23,13 @@ class Cart(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.user.first_name} {self.user.last_name}'s Cart"
+    
+    def total_price(self):
+        total_price = []
+        for item in self.cart_items.all():
+            price = item.product.price
+            total_price.append(price * item.quantity)
+        return sum(total_price)
        
 
 class CartItem(BaseModel):

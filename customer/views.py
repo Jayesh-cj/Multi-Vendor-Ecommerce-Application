@@ -23,6 +23,13 @@ def homepage(request):
     })
 
 
+def products(request):
+    categorys = Category.objects.all()
+    return render(request, 'customer/products.html', {
+        'categorys' : categorys
+    }) 
+
+
 def product_details(request, slug):
     product = Product.objects.get(slug = slug)
     related_products = Product.objects.filter(
@@ -64,3 +71,19 @@ def add_to_cart(request, pid):
 
     except Exception as e:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def view_cart(request):
+    cart = Cart.objects.get(user = request.user, is_paid = False)
+    return render(request, 'customer/cart.html', {
+        'cart' : cart,
+        'cart_items' : cart.cart_items.all()
+    })
+
+
+def remove_from_cart(request, slug, cid):
+    cart = Cart.objects.get(uid = cid)
+    product = Product.objects.get(slug = slug)
+    CartItem.objects.get(cart = cart, product = product).delete()
+    messages.success(request, message=f"{product.name} removed from cart.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

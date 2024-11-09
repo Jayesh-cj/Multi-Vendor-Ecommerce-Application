@@ -40,7 +40,7 @@ class SizeVariant(BaseModel):
     
 
 class Product(BaseModel):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='_category')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_category')
     vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_vendor')
     colors = models.ManyToManyField(ColorVariant, blank=True)
     sizes = models.ManyToManyField(SizeVariant, blank=True)
