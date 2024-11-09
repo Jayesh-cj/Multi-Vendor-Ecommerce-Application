@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
 from accounts.models import User
+from base.context_processor import cart_item_count
 from products.models import *
 from customer.models import Cart, CartItem
 

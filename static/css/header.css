@@ -1,0 +1,38 @@
+/* Initially hide the span */
+.icon-hint {
+    display: none;
+    position: absolute;
+    /* Position it to place it relative to the icon */
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Dark background */
+    color: #fff;
+    /* White text */
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    top: 100%;
+    /* Position below the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1;
+}
+
+/* Show the span when hovering over .icon */
+.widget-header:hover .icon-hint {
+    display: inline-block;
+}
+
+/* Add some hover effect on the icon */
+.icon:hover {
+    background-color: #f0f0f0;
+    /* Light background color */
+    border-color: #ddd;
+    /* Light border */
+    transition: 0.3s;
+    /* Smooth transition */
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}

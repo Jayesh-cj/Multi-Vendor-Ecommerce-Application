@@ -29,49 +29,11 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+<link rel="stylesheet" href=" {% static '/css/header.css' %} ">
+
 <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
-<style>
-    /* Initially hide the span */
-    .icon-hint {
-        display: none;
-        position: absolute;
-        /* Position it to place it relative to the icon */
-        background-color: rgba(0, 0, 0, 0.7);
-        /* Dark background */
-        color: #fff;
-        /* White text */
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 12px;
-        top: 100%;
-        /* Position below the icon */
-        left: 50%;
-        transform: translateX(-50%);
-        white-space: nowrap;
-        z-index: 1;
-    }
-
-    /* Show the span when hovering over .icon */
-    .widget-header:hover .icon-hint {
-        display: inline-block;
-    }
-
-    /* Add some hover effect on the icon */
-    .icon:hover {
-        background-color: #f0f0f0;
-        /* Light background color */
-        border-color: #ddd;
-        /* Light border */
-        transition: 0.3s;
-        /* Smooth transition */
-    }
-
-    body::-webkit-scrollbar {
-        display: none;
-    }
-</style>
 
 </html>
 
@@ -109,7 +71,7 @@
                             <div class="widget-header  mr-3">
                                 <a href="#" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-cart"></i></a>
-                                <span class="badge badge-pill badge-danger notify">{{ request.user.user_contacts.get_cart_items_count }}</span>
+                                <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
                                 <span class="icon-hint">Cart</span>
                             </div>
                             {% else %}
@@ -163,7 +125,6 @@
         // jquery ready start
         $(document).ready(function () {
             // jQuery code
-
         });
         // jquery end
     </script>
