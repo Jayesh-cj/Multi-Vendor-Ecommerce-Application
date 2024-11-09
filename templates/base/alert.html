@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="stylesheet" href=" {% static '/css/alert.css' %} ">
 {% if messages %}
 
 {% for message in messages %}
@@ -10,3 +12,5 @@
 {% endfor %}
 
 {% endif %}
+
+<script src="{% static '/js/alert.js' %} "></script>

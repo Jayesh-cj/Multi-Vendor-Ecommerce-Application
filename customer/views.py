@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 from accounts.models import User
 from products.models import *
@@ -33,6 +34,7 @@ def product_details(request, slug):
     })
 
 
+@login_required(login_url='http://127.0.0.1:8000/login/')
 def add_to_cart(request, pid):
     try:
         product = Product.objects.get(uid = pid)

@@ -1,0 +1,39 @@
+.popup-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.alert-close-icon {
+    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.alert-close-icon:hover {
+    color: red;
+}
+
+.alert-success {
+    background-color: #2ed63c;
+    color: #d4edda;
+}
+
+.alert-error {
+    background-color: #ff021adb;
+    color: white;
+}
+
+.alert-warning {
+    background-color: #fffe00e6;
+    color: white;
+}
+
+.alert-info {
+    background-color: #00dbff;
+    color: white;
+}

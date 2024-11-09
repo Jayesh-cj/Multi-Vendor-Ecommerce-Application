@@ -31,3 +31,9 @@ class CartItem(BaseModel):
     color_variant = models.ForeignKey(ColorVariant, on_delete=models.SET_NULL, null=True, blank=True)
     size_variant = models.ForeignKey(SizeVariant, on_delete=models.SET_NULL, null=True, blank=True)
     quantity  = models.IntegerField(default=1)
+
+    def __str__(self) -> str:
+        return self.product.name
+    
+    class Meta:
+        ordering = ['created_at']

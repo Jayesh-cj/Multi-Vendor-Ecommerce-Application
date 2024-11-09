@@ -126,47 +126,4 @@
     </div>
 </section>
 
-<script>
-$(document).ready(function () {
-    // Image hover functionality
-    $('.item-thumb').hover(function () {
-        const newSrc = $(this).data('src');
-        $('#mainImage').attr('src', newSrc);
-    });
-
-    let quantity = 1;
-    const maxQuantity = Math.min(5, {{ product.stock }});
-
-    $('#button-plus').click(function() {
-        if (quantity < maxQuantity) {
-            quantity += 1;
-            $('#quantity').val(quantity);
-        }  
-    });
-
-    $('#button-minus').click(function() {
-        if (quantity > 1) {
-            quantity -= 1;
-            $('#quantity').val(quantity);
-        }
-    });
-
-    const addToCartBtn = $(".btn-outline-primary");
-    
-    $('input[name="select_size"], input[name="select_color"], #button-plus, #button-minus').on('change click', function() {
-        const color = $('input[name="select_color"]:checked').val();
-        const size = $('input[name="select_size"]:checked').val();
-        
-        var newHref = `{% url 'customer:add_to_cart' product.uid %}?color=${color}&quantity=${quantity}`;
-
-        if (size) {
-            var newHref = `{% url 'customer:add_to_cart' product.uid %}?color=${color}&size=${size}&quantity=${quantity}`;
-        }
-
-        addToCartBtn.attr('href', newHref);
-    })
-});
-
-</script>
-
 {% endblock content %}
