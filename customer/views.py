@@ -1,7 +1,11 @@
 from django.shortcuts import redirect, render
-from accounts.models import User
-from products.models import Category, Product
 from django.db.models import Q
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+
+from accounts.models import User
+from products.models import *
+from customer.models import Cart, CartItem
 
 # Create your views here.
 def homepage(request):
@@ -27,3 +31,33 @@ def product_details(request, slug):
         'product' : product,
         'related_products' : related_products
     })
+
+
+def add_to_cart(request, pid):
+    try:
+        product = Product.objects.get(uid = pid)
+
+        cart, _ = Cart.objects.get_or_create(
+            user = request.user,
+            is_paid = False
+        )
+
+        cart_item = CartItem.objects.create(
+            cart = cart,
+            product = product,
+            quantity = request.GET.get('quantity')
+        )
+
+        if request.GET.get('size'):
+            cart_item.size_variant = SizeVariant.objects.get(name = request.GET.get('size'))
+
+        if request.GET.get('color'):
+            cart_item.color_variant = ColorVariant.objects.get(name = request.GET.get('color'))
+
+        cart_item.save()
+        
+        messages.success(request, message="Product added to cart.")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    except Exception as e:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

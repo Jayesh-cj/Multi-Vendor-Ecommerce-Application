@@ -12,6 +12,9 @@ class Contacts(models.Model):
     def __str__(self) -> str:
         return f"{self.user.first_name} {self.user.first_name}"
     
+    def get_cart_items_count(self):
+        return CartItem.objects.filter(cart__is_paid = False, cart__user = self.user).count()
+
 
 class Cart(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_cart')
@@ -20,7 +23,7 @@ class Cart(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.user.first_name} {self.user.last_name}'s Cart"
-    
+       
 
 class CartItem(BaseModel):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')

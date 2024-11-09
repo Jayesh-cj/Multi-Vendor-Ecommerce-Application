@@ -24,7 +24,7 @@ class Category(BaseModel):
         
 
 class ColorVariant(BaseModel):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     
     def __str__(self) -> str:
         return f"{self.name}"
@@ -33,7 +33,7 @@ class ColorVariant(BaseModel):
         ordering = ['name']
 
 class SizeVariant(BaseModel):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self) -> str:
         return self.name

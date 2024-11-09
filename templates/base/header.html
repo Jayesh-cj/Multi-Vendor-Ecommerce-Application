@@ -109,7 +109,7 @@
                             <div class="widget-header  mr-3">
                                 <a href="#" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-cart"></i></a>
-                                <span class="badge badge-pill badge-danger notify">0</span>
+                                <span class="badge badge-pill badge-danger notify">{{ request.user.user_contacts.get_cart_items_count }}</span>
                                 <span class="icon-hint">Cart</span>
                             </div>
                             {% else %}

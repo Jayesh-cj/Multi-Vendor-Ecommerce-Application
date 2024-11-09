@@ -1,6 +1,7 @@
 {% extends "base/header.html" %}
 
 {% block content %}
+{% include "base/alert.html" %}
 <section class="section-content padding-y bg">
     <div class="container">
 
@@ -81,7 +82,7 @@
                                 <div class="mt-1">
                                     {% for color in product.colors.all %}
                                     <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="select_size" valu="{{ color }}"
+                                        <input type="radio" name="select_color" value="{{ color }}"
                                             class="custom-control-input">
                                         <div class="custom-control-label">
                                             <div style="width: 25px; height: 25px; background-color: {{ color.name }};">
@@ -95,7 +96,7 @@
                         {% endif %}
 
                         <a href="#" class="btn  btn-primary"> Buy now </a>
-                        <a href="#" class="btn  btn-outline-primary"> <span class="text">Add to cart</span> <i
+                        <a href="{% url 'customer:add_to_cart' product.uid %}?color=" class="btn  btn-outline-primary"> <span class="text">Add to cart</span> <i
                                 class="fas fa-shopping-cart"></i> </a>
                     </article> <!-- product-info-aside .// -->
                 </main> <!-- col.// -->
@@ -126,29 +127,46 @@
 </section>
 
 <script>
-    $(document).ready(function () {
-        $('.item-thumb').hover(function () {
-            const newSrc = $(this).data('src');
-            $('#mainImage').attr('src', newSrc);
-        });
+$(document).ready(function () {
+    // Image hover functionality
+    $('.item-thumb').hover(function () {
+        const newSrc = $(this).data('src');
+        $('#mainImage').attr('src', newSrc);
     });
 
-    // Quanity button 
+    let quantity = 1;
     const maxQuantity = Math.min(5, {{ product.stock }});
 
     $('#button-plus').click(function() {
-        let quantity = parseInt($('#quantity').val());
         if (quantity < maxQuantity) {
-            $('#quantity').val(quantity + 1);
-        }
+            quantity += 1;
+            $('#quantity').val(quantity);
+        }  
     });
 
     $('#button-minus').click(function() {
-        let quantity = parseInt($('#quantity').val());
         if (quantity > 1) {
-            $('#quantity').val(quantity - 1);
+            quantity -= 1;
+            $('#quantity').val(quantity);
         }
     });
+
+    const addToCartBtn = $(".btn-outline-primary");
+    
+    $('input[name="select_size"], input[name="select_color"], #button-plus, #button-minus').on('change click', function() {
+        const color = $('input[name="select_color"]:checked').val();
+        const size = $('input[name="select_size"]:checked').val();
+        
+        var newHref = `{% url 'customer:add_to_cart' product.uid %}?color=${color}&quantity=${quantity}`;
+
+        if (size) {
+            var newHref = `{% url 'customer:add_to_cart' product.uid %}?color=${color}&size=${size}&quantity=${quantity}`;
+        }
+
+        addToCartBtn.attr('href', newHref);
+    })
+});
+
 </script>
 
 {% endblock content %}
