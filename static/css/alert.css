@@ -29,8 +29,8 @@
 }
 
 .alert-warning {
-    background-color: #fffe00e6;
-    color: white;
+    background-color: #ffff00c4;
+    color: rgb(250, 6, 6);
 }
 
 .alert-info {
