@@ -80,6 +80,8 @@ TEMPLATES = [
     },
 ]
 
+LOGIN_URL = 'login'
+
 WSGI_APPLICATION = 'ecomm.wsgi.application'
 
 

@@ -1,0 +1,126 @@
+{% extends "vendor/dashboard.html" %}
+{% load static %}
+
+{% block options %}
+<link rel="stylesheet" href="{% static '/css/cupon.css' %} ">
+
+<style>
+  .status-box {
+    display: flex;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+  }
+</style>
+
+{% include "base/alert.html" %}
+
+<h2 align="center">Create Cupon</h2>
+
+<div id="popup-form" class="popup">
+  <div class="popup-content">
+    <span class="close">&times;</span>
+
+    <h3>Create Cupon</h3>
+
+    <form method="POST" action="#">
+      {% csrf_token %}
+      <div>
+        <label for="id_coupon_code">Coupon code:</label>
+        <input type="text" name="coupon_code" class="form-control mb-4" placeholder="Enter The Cupon Code For Discount."
+          maxlength="10" required="" id="id_coupon_code" value="{{ cupon.coupon_code }}">
+      </div>
+      <div>
+        <label for="id_discount_price">Discount Price:</label>
+        <input type="number" name="discount_price" value="{{ cupon.discount_price|default:100 }}" min="100.0"
+          class="form-control mb-4" step="0.10" required="" id="id_discount_price">
+      </div>
+      <div>
+        <label for="id_minimum_amount">Minimum Purchase Amount:</label>
+        <input type="number" name="minimum_amount" value="{{ cupon.minimum_amount|default:500 }}" min="500.0"
+          class="form-control mb-4" step="0.10" required="" id="id_minimum_amount">
+      </div>
+      {% if update %}
+      <div class="status-box">
+        <label for="status">Status</label>
+        <input type="checkbox" name="status" class="ml-4 mr-2" style="width: fit-content;" {% if cupon.is_expired %}
+          checked {% endif %}>Deactivate
+      </div>
+      {% endif %}
+
+      {% if update %}
+      <button class="btn btn-primary w-100">Update</button>
+      {% else %}
+      <button class="btn btn-primary w-100">Create</button>
+      {% endif %}
+
+    </form>
+  </div>
+</div>
+
+<div class="container add-cupon mb-2">
+  <button class="btn btn-info" id="popupBtn"> Add Cupon </button>
+</div>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col"> Cupon Code </th>
+      <th scope="col"> Discount Amount</th>
+      <th scope="col"> Minimum Price </th>
+      <th scope="col"> Status </th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for cupon in cupons %}
+
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ cupon.coupon_code }}</td>
+      <td>{{ cupon.discount_price }}</td>
+      <td>{{ cupon.minimum_amount }}</td>
+      <td>
+        {% if cupon.is_expired %}
+        <small>Expiered</small>
+        {% else %}
+        <h6>Active</h6>
+        {% endif %}
+      </td>
+      <td>
+        <a href="{% url 'vendor:update_cupon' cupon.uid %}" class="btn btn-light" id="btnEdit"><i
+            class="fa-duotone fa-solid fa-pen-to-square"></i></a>
+        <a href="{% url 'vendor:delete_cupon' cupon.uid %}" class="btn btn-light" id="btnDelete"><i class="fa fa-trash"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<script>
+  $(document).ready(function () {
+    $('#popupBtn').click(function () {
+      $('#popup-form').fadeIn();
+    });
+
+    $('.close').click(function () {
+      $('#popup-form').fadeOut();
+    });
+
+    if (`{{update}}`) {
+      $('#popup-form').fadeIn();
+
+      $('.close').click(function () {
+        $('#popup-form').fadeOut();
+        window.location.href = `{% url 'vendor:create_cupon' %}`
+      })
+    }
+  });
+</script>
+{% endblock options %}

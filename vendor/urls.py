@@ -10,5 +10,8 @@ urlpatterns = [
     path('add-category/', views.add_category, name='add_category'),
     path('add-color/', views.add_color_variant, name='add_color'),
     path('add-size/', views.add_size_variant, name='add_size'),
-    path('delete-product/<str:slug>', views.delete_product, name='delete_product')
+    path('delete-product/<str:slug>', views.delete_product, name='delete_product'),
+    path('create-cupon/', views.create_cupon, name='create_cupon'),
+    path('update-cupon/<cid>/', views.update_cupon, name='update_cupon'),
+    path('delete-cupon/<cid>/', views.delete_cupon, name='delete_cupon')
 ]

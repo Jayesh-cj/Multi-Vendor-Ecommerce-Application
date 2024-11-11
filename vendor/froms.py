@@ -1,5 +1,6 @@
 from django import forms
 from products.models import *
+from vendor.models import Cupon
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -86,5 +87,23 @@ class ProductImagesForm(forms.ModelForm):
         widgets = {
             'image' : forms.FileInput(attrs={
                 'class' : 'form-control'
+            })
+        }
+
+
+class CuponForm(forms.ModelForm):
+    class Meta:
+        model = Cupon
+        fields = [ 'coupon_code', 'discount_price', 'minimum_amount']
+        widgets = {
+            'coupon_code' : forms.TextInput(attrs={
+                'class' : 'form-control mb-4',
+                'placeholder' : 'Enter The Cupon Code For Discount.'
+            }),
+            'discount_price' : forms.NumberInput(attrs={
+                'class' : 'form-control mb-4'
+            }),
+            'minimum_amount' : forms.NumberInput(attrs={
+                'class' : 'form-control mb-4'
             })
         }

@@ -1,4 +1,6 @@
-from django.http import JsonResponse
+from decimal import Decimal
+
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django import forms
 from django.contrib import messages
@@ -123,3 +125,67 @@ def delete_product(request, slug):
     Product.objects.get(slug = slug).delete()
     messages.success(request, message="Product deleted.")
     return redirect('vendor:products')
+
+
+@login_required()
+def create_cupon(request):
+    cupons = Cupon.objects.filter(vendor = request.user)
+    if request.method == 'POST':
+        cupon = Cupon.objects.create(
+            vendor = request.user,
+            coupon_code = request.POST.get('coupon_code'),
+            discount_price = request.POST.get('discount_price'),
+            minimum_amount = request.POST.get('minimum_amount')
+        )
+        cupon.save()
+
+        messages.success(request, 'Cupon created successfully')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    
+    return render(request, 'vendor/create_cupon.html', {
+        'cupons' : cupons
+    })
+
+
+def update_cupon(request, cid):
+    cupons = Cupon.objects.filter(vendor = request.user)
+    cupon = Cupon.objects.get(uid = cid)
+
+    if request.method == 'POST':
+        if cupon.vendor == request.user:
+            cupon.discount_price = Decimal(request.POST.get('discount_price'))
+            cupon.minimum_amount = Decimal(request.POST.get('minimum_amount'))
+            cupon.coupon_code = request.POST.get('coupon_code')
+            cupon.save()
+            
+            if request.POST.get('status') =='on':
+                cupon.is_expired = True
+                cupon.save()
+            else:
+                cupon.is_expired = False
+                cupon.save()
+
+            messages.success(request, "Cupon Updated SuccessFully")
+            return redirect('vendor:create_cupon')
+        
+        else:
+            messages.error(request, 'You Can Not Update This Cupon')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    
+    else:
+        return render(request, 'vendor/Create_cupon.html', {
+            'cupons' : cupons,
+            'cupon' : cupon,
+            'update' : True
+        })
+    
+
+def delete_cupon(request, cid): 
+    cupon = Cupon.objects.get(uid = cid)
+    if cupon.vendor == request.user:
+        cupon.delete()
+        messages.success(request, 'Cupon Deleted Successfully')
+        return redirect('vendor:create_cupon')
+    else:
+        messages.error(request, "You Can Not Delete This Cupon")
+        return redirect('vendor:create_cupon')
