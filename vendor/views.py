@@ -129,7 +129,7 @@ def delete_product(request, slug):
 
 @login_required()
 def create_cupon(request):
-    cupons = Cupon.objects.filter(vendor = request.user)
+    cupons = Cupon.objects.filter(vendor = request.user).order_by('is_expired')
     if request.method == 'POST':
         cupon = Cupon.objects.create(
             vendor = request.user,
@@ -148,7 +148,7 @@ def create_cupon(request):
 
 
 def update_cupon(request, cid):
-    cupons = Cupon.objects.filter(vendor = request.user)
+    cupons = Cupon.objects.filter(vendor = request.user).order_by('is_expired')
     cupon = Cupon.objects.get(uid = cid)
 
     if request.method == 'POST':

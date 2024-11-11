@@ -1,13 +1,16 @@
+from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from accounts.models import User
 from base.context_processor import cart_item_count
+
+from accounts.models import User
 from products.models import *
 from customer.models import Cart, CartItem
+from vendor.models import Cupon
 
 # Create your views here.
 def homepage(request):
@@ -87,3 +90,44 @@ def remove_from_cart(request, slug, cid):
     CartItem.objects.get(cart = cart, product = product).delete()
     messages.success(request, message=f"{product.name} removed from cart.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def cupon_verification(request):
+    try:
+        if request.method == 'POST':
+            vendors = []
+            code = request.POST.get('cupon_code')
+            cart = Cart.objects.get(uid = request.POST.get('cart'))
+            cupon = Cupon.objects.get(coupon_code = code)
+            items = CartItem.objects.filter(cart = cart)
+            
+            for item in items:
+                vendors = item.product.vendor.email
+            
+            if Decimal(request.POST.get('payable')) < cupon.minimum_amount:
+                return JsonResponse({
+                    'message' : f"You Need To Purchase More Than {cupon.minimum_amount} To Apply This Cupon.",
+                    'message_type' : 'error'
+                })
+            
+            elif cupon.vendor.email in vendors:
+                return JsonResponse({
+                    'message' : "Cupon is Applyed.",
+                    'message_type' : 'success',
+                    'discount' : cupon.discount_price,
+                    'total_price' : cart.total_price() - cupon.discount_price
+                })
+            
+            else:
+                return JsonResponse({
+                    'message' : 'Cupon Is Not Applicable For This Products.',
+                    'message_type' : 'error'
+                })
+            
+    except Cupon.DoesNotExist:
+        return JsonResponse({
+            'message' : f'{code} Cupon Is Not Found.',
+            'message_type' : 'error'
+        })
+    
+    return JsonResponse({'message': 'Coupon code received successfully!'},)
