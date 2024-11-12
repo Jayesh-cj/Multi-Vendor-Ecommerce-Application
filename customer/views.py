@@ -1,11 +1,10 @@
 from decimal import Decimal
+import json
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
-
-from base.context_processor import cart_item_count
 
 from accounts.models import User
 from products.models import *
@@ -25,13 +24,29 @@ def homepage(request):
         'products' : products
     })
 
-
 def products(request):
     categorys = Category.objects.all()
-    return render(request, 'customer/products.html', {
-        'categorys' : categorys
-    }) 
+    products = Product.objects.filter(stock__gte=1).order_by('?')
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        categories = request.GET.getlist('categorys')
+
+        if categories:
+            category_filter = Q()
+            for category in categories:
+                category_filter |= Q(category__name=category)
+            
+            product_data = products.filter(category_filter).order_by('?')
+
+            return render(request, 'customer/ajax/products.html', {
+                'categorys': categorys,
+                'products': product_data
+            })
+        
+    return render(request, 'customer/products.html', {
+        'categorys': categorys,
+        'products': products
+    })
 
 def product_details(request, slug):
     product = Product.objects.get(slug = slug)
