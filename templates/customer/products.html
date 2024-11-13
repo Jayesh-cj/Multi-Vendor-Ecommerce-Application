@@ -91,7 +91,7 @@
 
         $('.category-checkbox').on('change', function () {
             var category = $(this).val();
-            
+
             if($(this).prop('checked')) {
                 if (categorys.indexOf(category) === -1) {
                     categorys.push(category);
@@ -104,7 +104,7 @@
             }
             
             $.ajax({
-                url:`{% url 'customer:products' %}`,
+                url:`{% url 'customer:filter' %}`,
                 method:'GET',
                 data:{
                     'categorys' : categorys

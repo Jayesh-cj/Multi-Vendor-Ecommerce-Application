@@ -28,25 +28,32 @@ def products(request):
     categorys = Category.objects.all()
     products = Product.objects.filter(stock__gte=1).order_by('?')
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        categories = request.GET.getlist('categorys')
-
-        if categories:
-            category_filter = Q()
-            for category in categories:
-                category_filter |= Q(category__name=category)
-            
-            product_data = products.filter(category_filter).order_by('?')
-
-            return render(request, 'customer/ajax/products.html', {
-                'categorys': categorys,
-                'products': product_data
-            })
-        
     return render(request, 'customer/products.html', {
         'categorys': categorys,
         'products': products
     })
+
+
+def fillter_products(request):
+    all_categories = Category.objects.all()
+    products = Product.objects.filter(stock__gte=1).order_by('?')
+    context = {
+        'categorys': all_categories,
+        'products' : products
+    }
+
+    categories = request.GET.getlist('categorys')
+
+    if categories:
+        category_filter = Q()
+        for category in categories:
+            category_filter |= Q(category__name=category)
+        
+        product_data = products.filter(category_filter).order_by('?')
+        context['products'] = product_data
+
+    return render(request, 'customer/ajax/products.html', context)
+
 
 def product_details(request, slug):
     product = Product.objects.get(slug = slug)
