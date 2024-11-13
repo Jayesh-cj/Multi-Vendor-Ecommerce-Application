@@ -112,7 +112,25 @@
                 traditional: true,
                 success:function(data) {
                     $('#productCard').html(data);
+                }
+            })
+        })
 
+
+        $('#searchBarForm').keyup(function (e) {
+
+            e.preventDefault()
+            var keyValue = $('#searchBar').val();
+
+            $.ajax({
+                url:`{% url 'customer:filter' %}`,
+                method:'GET',
+                data:{
+                    'search' : keyValue
+                },
+                traditional:true,
+                success:function(data) {
+                    $('#productCard').html(data);
                 }
             })
         })

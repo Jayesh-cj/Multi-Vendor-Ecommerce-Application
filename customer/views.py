@@ -36,12 +36,14 @@ def products(request):
 
 def fillter_products(request):
     all_categories = Category.objects.all()
-    products = Product.objects.filter(stock__gte=1).order_by('?')
+    products = Product.objects.filter(stock__gte=1)
+
     context = {
         'categorys': all_categories,
         'products' : products
     }
 
+    search = request.GET.get('search')
     categories = request.GET.getlist('categorys')
 
     if categories:
@@ -50,6 +52,14 @@ def fillter_products(request):
             category_filter |= Q(category__name=category)
         
         product_data = products.filter(category_filter).order_by('?')
+
+        if search:
+            product_data = product_data.filter(name__icontains = search)
+            
+        context['products'] = product_data
+    
+    if search:
+        product_data = products.filter(name__icontains = search)
         context['products'] = product_data
 
     return render(request, 'customer/ajax/products.html', context)
