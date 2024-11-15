@@ -154,3 +154,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')
+
+# Payment gatway
+RAZORPAY_KEY_ID = os.getenv('KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('KEY_SECRET')

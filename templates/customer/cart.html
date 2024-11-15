@@ -27,9 +27,9 @@
                         <thead class="text-muted">
                             <tr class="small text-uppercase" align="center">
                                 <th scope="col">Product</th>
-                                <th scope="col" width="120">Stock</th>
-                                <th scope="col" width="120">Price</th>
                                 <th scope="col" width="200">Category </th>
+                                <th scope="col" width="120">Quantity</th>
+                                <th scope="col" width="120">Price</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,6 +60,11 @@
                                         </figcaption>
                                     </figure>
                                 </td>
+                                <td>
+                                    <div class="price-wrap center-td">
+                                        <var class="price">{{ item.product.category.name }}</var>
+                                    </div>
+                                </td>
                                 <td class="center-td">
                                     <h4>{{ item.quantity }}</h4>
                                 </td>
@@ -67,11 +72,6 @@
                                     <div class="price-wrap center-td">
                                         <var class="price">₹ {{ item.product.price }}</var>
                                     </div> <!-- price-wrap .// -->
-                                </td>
-                                <td>
-                                    <div class="price-wrap center-td">
-                                        <var class="price">{{ item.product.category.name }}</var>
-                                    </div>
                                 </td>
                                 <td class="text-right">
                                     <a data-original-title="Save to Wishlist" title=""
@@ -89,7 +89,7 @@
                     {% endif %}
 
                     <div class="card-body border-top">
-                        <a href="#" class="btn btn-primary float-md-right"> Make Purchase <i
+                        <a href="{% url 'customer:checkout' %}" class="btn btn-primary float-md-right"> Make Purchase <i
                                 class="fa fa-chevron-right"></i> </a>
                         <a href="{% url 'customer:products' %}" class="btn btn-light"> <i
                                 class="fa fa-chevron-left"></i> Continue shopping </a>
@@ -111,7 +111,8 @@
                                 <label>Have coupon?</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="cupon_code" name="cupon_code"
-                                        placeholder="Coupon code">
+                                        placeholder="Coupon code" 
+                                        value="{% if cart.cupon %} {{ cart.cupon.coupon_code }} {% endif %}" style="color: black;">
                                     <span class="input-group-append">
                                         <button class="btn btn-primary">Apply</button>
                                     </span>
@@ -124,15 +125,15 @@
                     <div class="card-body">
                         <dl class="dlist-align">
                             <dt>Total price:</dt>
-                            <dd class="text-right" id="total_price"><b>₹ {{ cart.total_price }}</b></dd>
+                            <dd class="text-right" id="total_price"><b>₹ {{ total_price }}</b></dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>Discount:</dt>
-                            <dd class="text-right" id="discount_price">00.00</dd>
+                            <dd class="text-right" id="discount_price">₹ {{ discount }}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>Total:</dt>
-                            <dd class="text-right  h5" id="amount"><strong>₹ {{ cart.total_price }}</strong></dd>
+                            <dd class="text-right  h5" id="amount"><strong>₹ {{ total_price }}</strong></dd>
                         </dl>
                         <hr>
                         <p class="text-center mb-3">
@@ -151,6 +152,12 @@
 
 <script>
     $(document).ready(function () {
+
+        var cuponValueAttr = $('#cupon_code').val();
+        if(cuponValueAttr){
+            $('#cupon_code').attr('readonly', 'readonly');
+        }
+        
         $('#cuponForm').on('submit', function (e) {
          
             e.preventDefault();
@@ -177,8 +184,9 @@
                             <span class="alert-close-icon" aria-label="Close" role="button">&times;</span>
                         </div>
                     `);
-                    $('#discount_price').text(data.discount);
-                    $('#amount').text(data.total_price);
+                    $('#discount_price').text('₹ '+data.discount);
+                    $('#amount').text('₹ '+data.total_price);
+                    $('#cupon_code').attr('readonly', 'readonly');
                 }
             })
 

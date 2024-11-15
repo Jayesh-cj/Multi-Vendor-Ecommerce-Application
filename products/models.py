@@ -1,4 +1,3 @@
-from typing import Iterable
 from django.db import models
 from django.utils.text import slugify
 from base.models import BaseModel

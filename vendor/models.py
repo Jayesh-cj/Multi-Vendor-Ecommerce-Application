@@ -1,7 +1,7 @@
 from django.db import models
 from base.models import BaseModel
 from accounts.models import User
-from products.models import Product
+from products.models import Product, ColorVariant, SizeVariant
 
 # Create your models here.
 class Cupon(BaseModel):
@@ -37,5 +37,7 @@ class Order(BaseModel):
 class OrderItem(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items_order')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True, related_name='ordered_product')
+    product_color = models.ForeignKey(ColorVariant, on_delete=models.SET_NULL, null=True, blank=True)
+    product_size = models.ForeignKey(SizeVariant, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField()
     price = models.DecimalField(decimal_places=2, max_digits=8)

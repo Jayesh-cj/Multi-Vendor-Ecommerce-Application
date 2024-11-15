@@ -1,5 +1,4 @@
 from decimal import Decimal
-import json
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from django.contrib import messages
@@ -8,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from accounts.models import User
 from products.models import *
-from customer.models import Cart, CartItem
+from customer.models import Cart, CartItem, Contacts
 from vendor.models import Cupon
 
 # Create your views here.
@@ -77,7 +76,6 @@ def product_details(request, slug):
     })
 
 
-@login_required(login_url='http://127.0.0.1:8000/login/')
 def add_to_cart(request, pid):
     try:
         product = Product.objects.get(uid = pid)
@@ -110,9 +108,19 @@ def add_to_cart(request, pid):
 
 def view_cart(request):
     cart = Cart.objects.get(user = request.user, is_paid = False)
+    
+    if cart.cupon:
+        discount = cart.cupon.discount_price
+        total = (cart.total_price() - cart.cupon.discount_price)
+    else:
+        discount = 00.0
+        total = cart.total_price()
+
     return render(request, 'customer/cart.html', {
         'cart' : cart,
-        'cart_items' : cart.cart_items.all()
+        'cart_items' : cart.cart_items.all(),
+        'discount' : discount,
+        'total_price' : total,
     })
 
 
@@ -134,7 +142,7 @@ def cupon_verification(request):
             items = CartItem.objects.filter(cart = cart)
             
             for item in items:
-                vendors = item.product.vendor.email
+                vendors.append(item.product.vendor.email)
             
             if Decimal(request.POST.get('payable')) < cupon.minimum_amount:
                 return JsonResponse({
@@ -142,7 +150,15 @@ def cupon_verification(request):
                     'message_type' : 'error'
                 })
             
+            elif cart.cupon == cupon:
+                return JsonResponse({
+                    'message' : "Cupon Is Already Applyed.",
+                    'message_type' : 'error'
+                })
+            
             elif cupon.vendor.email in vendors:
+                cart.cupon = cupon
+                cart.save()
                 return JsonResponse({
                     'message' : "Cupon is Applyed.",
                     'message_type' : 'success',
@@ -163,3 +179,15 @@ def cupon_verification(request):
         })
     
     return JsonResponse({'message': 'Coupon code received successfully!'},)
+
+@login_required()
+def checkout(request):
+    cart = Cart.objects.get(user = request.user, is_paid = False)
+    address = Contacts.objects.filter(user = request.user)
+    return render(request, 'customer/checkout.html', {
+        'products' : cart,
+        'total' : cart.total_price(),
+        'discount' : cart.cupon.discount_price if cart.cupon else 00.00,
+        'payable' : (cart.total_price() - cart.cupon.discount_price),
+        'address' : address
+    })
