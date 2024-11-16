@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from accounts.models import User
+from ecomm.settings import LOGIN_URL
 from products.models import *
 from customer.models import Cart, CartItem, Contacts
 from vendor.models import Cupon
@@ -108,19 +109,19 @@ def add_to_cart(request, pid):
 
 def view_cart(request):
     cart = Cart.objects.get(user = request.user, is_paid = False)
+    total = cart.total_price()
     
     if cart.cupon:
         discount = cart.cupon.discount_price
-        total = (cart.total_price() - cart.cupon.discount_price)
     else:
         discount = 00.0
-        total = cart.total_price()
 
     return render(request, 'customer/cart.html', {
         'cart' : cart,
         'cart_items' : cart.cart_items.all(),
         'discount' : discount,
         'total_price' : total,
+        'payable' : total - discount
     })
 
 
@@ -180,10 +181,13 @@ def cupon_verification(request):
     
     return JsonResponse({'message': 'Coupon code received successfully!'},)
 
-@login_required()
+@login_required(login_url=LOGIN_URL)
 def checkout(request):
     cart = Cart.objects.get(user = request.user, is_paid = False)
     address = Contacts.objects.filter(user = request.user)
+
+    print(request.POST)
+    
     return render(request, 'customer/checkout.html', {
         'products' : cart,
         'total' : cart.total_price(),
@@ -191,3 +195,13 @@ def checkout(request):
         'payable' : (cart.total_price() - cart.cupon.discount_price),
         'address' : address
     })
+
+
+def add_address(request):
+    contact = Contacts.objects.create(
+        user = request.user,
+        address = request.POST.get('address')
+    )
+    contact.save()
+    messages.success(request, message='Address Added.')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
