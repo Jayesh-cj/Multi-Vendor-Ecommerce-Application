@@ -1,5 +1,5 @@
 from django.contrib import admin
-from vendor.models import Cupon
+from vendor.models import *
 
 # Register your models here.
 @admin.register(Cupon)
