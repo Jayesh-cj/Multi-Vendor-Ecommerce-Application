@@ -6,6 +6,13 @@ from vendor.models import *
 class CuponAdmin(admin.ModelAdmin):
     list_display = ['coupon_code', 'vendor', 'is_expired', 'discount_price', 'minimum_amount']
 
-admin.site.register(Order)
-admin.site.register(OrderItem)
+class OrderItemAdmin(admin.StackedInline):
+    model = OrderItem
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['user', 'vendor', 'status', 'payment']
+    inlines = [OrderItemAdmin]
+
 admin.site.register(Payment)
+admin.site.register(OrderItem)

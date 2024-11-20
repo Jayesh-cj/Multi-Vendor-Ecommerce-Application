@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from accounts.models import User
 from products.models import ProductImages
+from vendor.models import *
 
 from vendor.froms import *
 
@@ -189,3 +190,8 @@ def delete_cupon(request, cid):
     else:
         messages.error(request, "You Can Not Delete This Cupon")
         return redirect('vendor:create_cupon')
+    
+
+def orders(request):
+    orders = Order.objects.filter()
+    return render(request, 'vendor/orders.html')

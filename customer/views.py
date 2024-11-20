@@ -1,5 +1,7 @@
 import razorpay
 
+from collections import defaultdict
+
 from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db.models import Q
@@ -236,22 +238,31 @@ def create_razorepay_order(request):
             user = request.user,
             amount = amount
         )
-        payment_details.save()
 
+        cart_uid = request.POST.get('cart')
         address = Contacts.objects.get(id = request.POST.get('address_id')).address
+
+        cart = Cart.objects.get(uid = cart_uid)
+        items = CartItem.objects.filter(cart=cart)
+        vendor_items = defaultdict(list)
         
-        if payment_details:
+        for item in items:
+            vendor_items[item.product.vendor].append(item)
+
+        for vendor, vendor_items_list in vendor_items.items():
+            total_amount = sum(item.quantity * item.product.price for item in vendor_items_list)
+
             order_details = Order.objects.create(
                 payment = payment_details,
                 user = request.user,
-                total_amount = amount,
-                shipping_address = address
+                total_amount = total_amount,
+                shipping_address = address,
+                vendor = vendor,
+                cupon = cart.cupon,
+                payable = payable
             )
-            order_details.save()
 
-        if order_details:
-            items = CartItem.objects.filter(cart = request.POST.get('cart'))
-            for item in items:
+            for item in vendor_items_list:
                 OrderItem.objects.create(
                     order = order_details,
                     product = item.product,
@@ -277,7 +288,6 @@ def payment_validation(request):
     
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
     cart = Cart.objects.get(uid = data['cart_id'])
-    print(cart.order_payment)
     payment = cart.order_payment
 
     try:
@@ -290,6 +300,9 @@ def payment_validation(request):
         if verified:
             payment.status = 'Completed'
             payment.save()
+
+            cart.is_paid = True
+            cart.save()
         else:
             payment.status = 'Failed'
             payment.save()

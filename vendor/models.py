@@ -1,3 +1,4 @@
+from typing import Iterable
 import uuid
 from django.db import models
 from base.models import BaseModel
@@ -41,15 +42,23 @@ class Order(BaseModel):
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled')
     )
-    payment = models.OneToOneField(Payment, on_delete=models.CASCADE, related_name='order_payment')
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='order_payment')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     total_amount = models.DecimalField(decimal_places=2, max_digits=10)
     status = models.CharField(max_length=100, choices=ORDER_STATUS, default='Pending')
     shipping_address = models.TextField(null=True, blank=True)
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order_vendor')
+    cupon = models.ForeignKey(Cupon, on_delete=models.SET_NULL, null=True, blank=True, default=None, related_name="order_cupon")
+    payable = models.DecimalField(decimal_places=2, max_digits=10)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Order by {self.user}"
+    
+    def save(self, *args, **kwargs) -> None:
+        if self.cupon:
+            self.payable = (self.total_amount - self.cupon.discount_price)
+        return super(Order, self).save(*args, **kwargs)
     
 
 class OrderItem(BaseModel):
