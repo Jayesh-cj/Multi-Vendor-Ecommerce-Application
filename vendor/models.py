@@ -41,7 +41,7 @@ class Order(BaseModel):
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled')
     )
-    payment = models.OneToOneField(Payment, on_delete=models.CASCADE, related_name='order')
+    payment = models.OneToOneField(Payment, on_delete=models.CASCADE, related_name='order_payment')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     total_amount = models.DecimalField(decimal_places=2, max_digits=10)
     status = models.CharField(max_length=100, choices=ORDER_STATUS, default='Pending')
@@ -59,3 +59,5 @@ class OrderItem(BaseModel):
     product_size = models.ForeignKey(SizeVariant, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_size')
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(decimal_places=2, max_digits=8)
+
+    

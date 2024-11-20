@@ -5,3 +5,7 @@ from vendor.models import *
 @admin.register(Cupon)
 class CuponAdmin(admin.ModelAdmin):
     list_display = ['coupon_code', 'vendor', 'is_expired', 'discount_price', 'minimum_amount']
+
+admin.site.register(Order)
+admin.site.register(OrderItem)
+admin.site.register(Payment)

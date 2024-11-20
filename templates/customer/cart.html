@@ -184,9 +184,11 @@
                             <span class="alert-close-icon" aria-label="Close" role="button">&times;</span>
                         </div>
                     `);
-                    $('#discount_price').text('₹ '+data.discount);
-                    $('#amount').text('₹ '+data.total_price);
-                    $('#cupon_code').attr('readonly', 'readonly');
+                    if(data.discount && data.total_price){
+                        $('#discount_price').text('₹ '+data.discount);
+                        $('#amount').text('₹ '+data.total_price);
+                        $('#cupon_code').attr('readonly', 'readonly');
+                    }
                 }
             })
 

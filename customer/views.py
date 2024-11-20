@@ -1,15 +1,19 @@
+import razorpay
+
 from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from accounts.models import User
+from ecomm import settings
 from ecomm.settings import LOGIN_URL
 from products.models import *
 from customer.models import Cart, CartItem, Contacts
-from vendor.models import Cupon
+from vendor.models import *
 
 # Create your views here.
 def homepage(request):
@@ -121,7 +125,7 @@ def view_cart(request):
         'cart_items' : cart.cart_items.all(),
         'discount' : discount,
         'total_price' : total,
-        'payable' : total - discount
+        'payable' : (total - Decimal(discount))
     })
 
 
@@ -181,21 +185,6 @@ def cupon_verification(request):
     
     return JsonResponse({'message': 'Coupon code received successfully!'},)
 
-@login_required(login_url=LOGIN_URL)
-def checkout(request):
-    cart = Cart.objects.get(user = request.user, is_paid = False)
-    address = Contacts.objects.filter(user = request.user)
-
-    print(request.POST)
-    
-    return render(request, 'customer/checkout.html', {
-        'products' : cart,
-        'total' : cart.total_price(),
-        'discount' : cart.cupon.discount_price if cart.cupon else 00.00,
-        'payable' : (cart.total_price() - cart.cupon.discount_price),
-        'address' : address
-    })
-
 
 def add_address(request):
     contact = Contacts.objects.create(
@@ -205,3 +194,111 @@ def add_address(request):
     contact.save()
     messages.success(request, message='Address Added.')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required(login_url=LOGIN_URL)
+def checkout(request):
+    cart = Cart.objects.get(user = request.user, is_paid = False)
+    address = Contacts.objects.filter(user = request.user)
+
+  
+    return render(request, 'customer/checkout.html', {
+        'products' : cart,
+        'total' : cart.total_price(),
+        'discount' : cart.cupon.discount_price if cart.cupon else 00.00,
+        'payable' : (cart.total_price() - cart.cupon.discount_price),
+        'address' : address
+    })
+    
+
+# RazorePay Payment Order Creation
+@csrf_exempt
+def create_razorepay_order(request):
+    try:
+        amount = Decimal(request.POST.get('amount'))
+        currency = 'INR'
+        payable = int((amount * 100))
+        api_key = settings.RAZORPAY_KEY_ID
+
+        # razorepay client initialization
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+        # create razorpay Order
+        order_data = {
+            'amount': payable,  # Amount in paise
+            'currency': currency,
+            'payment_capture': '1',  # Auto-capture payment after authorization
+        }
+
+        order = client.order.create(data=order_data)
+
+        payment_details = Payment.objects.create(
+            user = request.user,
+            amount = amount
+        )
+        payment_details.save()
+
+        address = Contacts.objects.get(id = request.POST.get('address_id')).address
+        
+        if payment_details:
+            order_details = Order.objects.create(
+                payment = payment_details,
+                user = request.user,
+                total_amount = amount,
+                shipping_address = address
+            )
+            order_details.save()
+
+        if order_details:
+            items = CartItem.objects.filter(cart = request.POST.get('cart'))
+            for item in items:
+                OrderItem.objects.create(
+                    order = order_details,
+                    product = item.product,
+                    product_color = item.color_variant,
+                    product_size = item.size_variant,
+                    quantity = item.quantity,
+                    price = (item.quantity * item.product.price)
+                )
+
+        return JsonResponse({
+            'order_id' : order['id'],
+            'payable' : payable,
+            'api_key' : api_key
+        })
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'Something went wrong'}, status=500)
+    
+
+# Razorpay payment validation
+def payment_validation(request):
+    data = request.POST
+    
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    cart = Cart.objects.get(uid = data['cart_id'])
+    print(cart.order_payment)
+    payment = cart.order_payment
+
+    try:
+        verified = client.utility.verify_payment_signature({
+            'razorpay_order_id': data['razorpay_order_id'],
+            'razorpay_payment_id': data['razorpay_payment_id'],
+            'razorpay_signature': data['razorpay_signature']
+        })
+
+        if verified:
+            payment.status = 'Completed'
+            payment.save()
+        else:
+            payment.status = 'Failed'
+            payment.save()
+        
+        return JsonResponse({
+            'message' : 'Payment Sucessfull'
+        })
+    except Exception as e:
+        print(e)
+        return JsonResponse({
+            'error' : str(e)
+        })
