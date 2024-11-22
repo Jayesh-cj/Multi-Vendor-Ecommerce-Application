@@ -19,9 +19,11 @@ from vendor.models import *
 
 # Create your views here.
 def homepage(request):
-    user = User.objects.get(uid = request.user.uid)
-    if user.user_type == 'Vendor':
-        return redirect('vendor:homepage')
+    user = request.user
+    if user.is_authenticated:
+        user = User.objects.get(uid = request.user.uid)
+        if user.user_type == 'Vendor':
+            return redirect('vendor:homepage')
     
     category = Category.objects.all().order_by('name')
     products = Product.objects.filter(stock__gte = 1).order_by('?')[:12]

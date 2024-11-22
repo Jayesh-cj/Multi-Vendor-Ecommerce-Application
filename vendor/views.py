@@ -16,11 +16,20 @@ from vendor.froms import *
 @login_required()
 def homepage(request):
     try:
+        profit = 00
         vendor = User.objects.get(uid = request.user.uid)
+
+        for order in vendor.order_vendor.filter(status = 'Delivered'):
+            amounts = order.get_order_total_price()
+            profit += amounts['final_price']
+
     except Exception as e:
         print(e)
     return render(request,'vendor/homepage.html',{
         'vendor' : vendor,
+        'profit' : profit,
+        'completed_order' : vendor.order_vendor.filter(status = "Delivered").count() if vendor.order_vendor else 0,
+        'total_order' : vendor.order_vendor.count() if vendor.order_vendor else 0,
         'product_count': vendor.product_vendor.count()
     })
 
@@ -193,5 +202,21 @@ def delete_cupon(request, cid):
     
 
 def orders(request):
-    orders = Order.objects.filter()
-    return render(request, 'vendor/orders.html')
+    orders = Order.objects.filter(vendor = request.user)
+    return render(request, 'vendor/orders.html', {
+        'orders' : orders
+    })
+
+
+def order_items_details(request, oid):
+    order = Order.objects.get(uid = oid)
+    return render(request, 'vendor/order_items.html', {
+        'order' : order
+    })
+
+
+def update_order_status(request, order_id):
+    order = Order.objects.get(uid = order_id)
+    order.status = request.POST.get('order_status')
+    order.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

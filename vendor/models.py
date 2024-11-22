@@ -1,4 +1,4 @@
-from typing import Iterable
+from decimal import Decimal
 import uuid
 from django.db import models
 from base.models import BaseModel
@@ -57,9 +57,36 @@ class Order(BaseModel):
     
     def save(self, *args, **kwargs) -> None:
         if self.cupon:
-            self.payable = (self.total_amount - self.cupon.discount_price)
+            discount = self.cupon.discount_price
+            self.payable = (self.total_amount - discount)
+        else:
+            self.payable = self.total_amount
+
         return super(Order, self).save(*args, **kwargs)
     
+    def get_order_total_price(self):
+        order_total = Decimal(0.0)
+        discount = self.cupon.discount_price if self.cupon else 00
+        vendors = []
+
+        for item in self.items.all():
+            order_total += item.total_price
+            vendors.append(item.produt_vendors)
+
+        final_price = order_total
+        
+        if self.cupon.vendor in vendors:
+            final_price = order_total - self.cupon.discount_price
+
+        return {
+            'order_total' : order_total,
+            'discount' : discount,
+            'final_price' : final_price
+        }
+    
+    class Meta:
+            ordering = ['created_at']
+
 
 class OrderItem(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
@@ -69,4 +96,10 @@ class OrderItem(BaseModel):
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(decimal_places=2, max_digits=8)
 
+    @property
+    def total_price(self):
+        return self.price * self.quantity
     
+    @property
+    def produt_vendors(self):
+        return self.product.vendor

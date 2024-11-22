@@ -14,5 +14,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ['user', 'vendor', 'status', 'payment']
     inlines = [OrderItemAdmin]
 
+@admin.register(OrderItem)
+class OrderItemDisplay(admin.ModelAdmin):
+    list_display = ['order', 'product', 'product_color', 'product_size', 'quantity', 'price']
+
 admin.site.register(Payment)
-admin.site.register(OrderItem)

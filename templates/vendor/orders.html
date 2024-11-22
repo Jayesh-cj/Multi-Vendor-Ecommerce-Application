@@ -2,5 +2,107 @@
 
 {% block options %}
 {% include "base/alert.html" %}
-Orders
+
+<style>
+    .btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .item-row {
+        display: none;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .order-row:hover{
+        cursor: pointer;
+    }
+
+    .order-row:hover+.item-row {
+        display: table-row;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container mt-3 flex-row">
+    <table class="table table-borderless tbl">
+        <thead class="text-muted">
+            <tr class="small text-muted border-bottom border-dark">
+                <th class="border-right border-light">#</th>
+                <th class="border-right border-light">Order From</th>
+                <th class="border-right border-light">Cupon</th>
+                <th class="border-right border-light">Total Amount</th>
+                <th class="border-right border-light">Payment Status</th>
+                <th class="border-right border-light">Order Status</th>
+                <th class="border-right border-light">Order Placed Date</th>
+                <th class="border-light">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr class="order-row" data-order-id="{{ order.id }}">
+                <td class=" txt-b border-right border-light"> {{ forloop.counter }} </td>
+                <td class="txt-b border-right border-light"> {{ order.user.first_name }} {{ order.user.last_name }}</td>
+                <td class="txt-b border-right border-light">
+                    {% if order.cupon and order.cupon %}
+                      {{ order.cupon.coupon_code }}
+                    {% else %}
+                        Not Applied
+                    {% endif %}
+                </td>
+                <td class="txt-b text-right border-right border-light">
+                    Total : ₹ {{ order.get_order_total_price.order_total }} <br>
+                    Discount : ₹ {{ order.get_order_total_price.discount }} <br>
+                    <b>Paid Amount : ₹ {{ order.get_order_total_price.final_price }}</b>
+                </td>
+                <td class="txt-b border-right border-light"> <b>{{ order.payment.status }}</b> </td>
+                <td class="txt-b border-right border-light">
+                    <b>{{ order.status }}</b> <br>
+                    <small>{{ order.updated_at }}</small>
+                </td>
+                <td class="txt-b border-right border-light"> {{ order.created_at|date }} </td>
+                <td class="txt-b border-light">
+                    <a href="{% url 'vendor:ordered_items' order.uid %}" class="btn btn-info btn-small">View Products</a>
+                </td>
+            </tr>
+            <tr class="border-bottom item-row" data-order-id="{{ order.id }}" style="display: none;">
+                <td></td>
+                <td colspan="5">
+                    {% for item in order.items.all %}
+                    <a href="{% url 'vendor:ordered_items' order.uid %}">
+                        <p class="txt-sm">{{ item.product.name }}</p>
+                    </a>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".order-row").hover(
+            function () {
+                var orderId = $(this).data("order-id");
+                $('.item-row[data-order-id="' + orderId + '"]').fadeIn(300);
+            },
+            function () {
+                var orderId = $(this).data("order-id");
+                $('.item-row[data-order-id="' + orderId + '"]').fadeOut(300);
+            }
+        );
+
+        $(".item-row").hover(
+            function () {
+                $(this).stop(true, true).fadeIn(300);
+            },
+            function () {
+                $(this).fadeOut(300);
+            }
+        );
+    });
+
+</script>
 {% endblock %}

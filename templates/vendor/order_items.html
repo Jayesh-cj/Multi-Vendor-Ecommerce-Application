@@ -1,0 +1,188 @@
+{% extends "vendor/dashboard.html" %}
+{% load static %}
+
+{% block options %}
+{% include "base/alert.html" %}
+
+<style>
+    .details-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .user-details {
+        width: 50%;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .order-details {
+        width: 50%;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .amount-details {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 10px;
+        width: 400px;
+    }
+</style>
+
+<div id="status-modal" class="modal" style="display: none;">
+    <div class="modal-content border border-light p-4">
+        <h4 align="center">Update Order Status</h4>
+        <form id="update-status-form" method="post" action="{% url 'vendor:update_status' order.uid %}">
+            {% csrf_token %}
+            <label for="order_status"><b>Order Status</b></label>
+            <select name="order_status" id="" class="form-control">
+                <option value="Pending">Pending</option>
+                <option value="Shipped">Shipped</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+
+            <input type="hidden" id="order-id" value="{{ order.uid }}">
+            <div class="mt-3 text-right">
+                <button type="button" id="close-modal" class="btn btn-secondary">Close</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="container details-container m-1">
+    <div class="user-details p-4 mr-1 border border-light">
+        <h4 align="center"><u>User Details</u></h4>
+        <div class="details mt-2">
+            <p>
+                <b>Name : </b>{{ order.user.first_name }} {{ order.user.last_name}} <br>
+                <b>Username : </b>{{ order.user.username}} <br>
+                <b>Contact : </b>{{ order.user.phone }} <br>
+                <b>Email : </b>{{ order.user.email }} <br>
+                <b>Address : </b>{{ order.shipping_address }}
+            </p>
+        </div>
+    </div>
+    <div class="order-details p-4 ml-1 border border-light">
+        <div class="top">
+            <div></div>
+            <h4 align="center"><u>Order Details</u></h4>
+            <i class="fa-duotone fa-solid fa-pen-to-square border-light" id="update-status"
+                style="cursor: pointer;"></i>
+        </div>
+        <div class="details mt-2">
+            <p>
+                <b>Order Placed Date : </b>{{ order.created_at }} <br>
+                <b>Payment Status : </b>{{ order.payment.status }} <br>
+                <b>Order Status : </b>{{ order.status }}  -  <small>{{ order.updated_at }}</small> <br>
+                <b>Cupon Code : </b>{% if order.cupon %} {{ order.cupon.coupon_code }} {% else %} Cupon Is Not Applied
+                {% endif %}
+            </p>
+            <hr>
+            <div class="amount-details">
+                <div class="titles">
+                    <p>
+                        Total : <br>
+                        Discount : <br>
+                        Paid Amount :
+                    </p>
+                </div>
+                <div class="amounts text-right">
+                    <p>
+                        <b>₹ {{ order.get_order_total_price.order_total }}</b> <br>
+                        ₹ {{ order.get_order_total_price.discount }} <br>
+                        <b>₹ {{ order.get_order_total_price.final_price }}</b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-borderless table-shopping-cart">
+    <thead class="text-muted">
+        <tr class="small text-uppercase">
+            <th scope="col">Product</th>
+            <th scope="col" width="120">Quantity</th>
+            <th scope="col" width="200">Category </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+        <tr class="border-bottom">
+            <td>
+                <figure class="itemside">
+                    <div class="aside">
+                        {% if item.product.product_images.all %}
+                        <img src="{{ item.product.product_images.all.0.image.url }}" class="img-sm">
+                        {% endif %}
+                    </div>
+                    <figcaption class="info">
+                        <h5>{{ item.product.name }}</h5>
+                        <p>
+                            {% if item.product_color %}
+                            Color : {{ item.product_color.name }} <br>
+                            {% endif %}
+                            {% if item.product_size %}
+                            Size : {{ item.product_size.name }}
+                            {% endif %}
+                        </p>
+                    </figcaption>
+                </figure>
+            </td>
+            <td>
+                <h4>{{ item.quantity }}</h4>
+            </td>
+            <td>
+                <div class="price-wrap">
+                    <var class="price">{{ item.product.category.name }}</var>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('#update-status').on('click', function () {
+            $('#status-modal').fadeIn();
+        });
+
+        $('#close-modal').on('click', function () {
+            $('#status-modal').fadeOut();
+        });
+    });
+</script>
+{% endblock %}

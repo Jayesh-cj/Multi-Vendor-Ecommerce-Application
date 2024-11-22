@@ -9,11 +9,13 @@
 <div class="card-container">
     <div class="card">
         <h3>Profit</h3>
-        <p>$10,000</p>
+        <p>₹ {{ profit }}</p>
     </div>
     <div class="card">
-        <h3>Orders</h3>
-        <p>120</p>
+        <a href="{% url 'vendor:orders' %}">
+            <h3>Orders</h3>
+        </a>
+        <p>{{ completed_order }} / {{ total_order }}</p>
     </div>
     <div class="card">
         <a href="{% url 'vendor:products' %}">

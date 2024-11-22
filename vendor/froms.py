@@ -1,6 +1,6 @@
 from django import forms
 from products.models import *
-from vendor.models import Cupon
+from vendor.models import Order
 
 class CategoryForm(forms.ModelForm):
     class Meta:
