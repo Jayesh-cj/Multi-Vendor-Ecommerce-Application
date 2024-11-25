@@ -51,7 +51,7 @@
                     <div class="col-lg-6 col-sm-12">
                         {% if request.path == '/products/' %}
                         <form class="search mr-3" id="searchBarForm">
-                            <div class="input-group w-100">
+                            <div class="input-group" style="width: 90%;">
                                 <input type="text" class="form-control" id="searchBar" placeholder="Search">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit">
@@ -63,37 +63,43 @@
                         {% endif %}
                     </div>
                     <div class="col-lg-4 col-sm-6 col-8">
-                        <div class="widgets-wrap float-md-right" style="width: max-content;">
+                        <div class="widgets-wrap float-md-right" style="width: max-content; display: flex;">
                             
                             {% if request.user.user_type == "Customer" %}
                             <div class="widget-header  mr-3">
                                 <a href="{% url 'customer:products' %}" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-bag"></i></a>
-                                <span class="icon-hint">Products</span>
+                                <span class="icon-hint mt-1">Products</span>
                             </div>
 
                             <div class="widget-header  mr-3">
                                 <a href="{% url 'customer:cart' %}" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-cart"></i></a>
                                 <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
-                                <span class="icon-hint">Cart</span>
+                                <span class="icon-hint mt-1">Cart</span>
                             </div>
                             {% else %}
                             <div class="widget-header  mr-3">
                                 <a href="{% url 'vendor:products' %}" class="icon icon-sm rounded-circle border"><i
                                         class="fa fa-shopping-bag"></i></a>
-                                <span class="icon-hint">Products</span>
+                                <span class="icon-hint mt-1">Products</span>
                             </div>
                             {% endif %}
-
-                            <div class="widget-header icontext">
                                 
                                 {% if request.user.user_type == "Customer" %}
-                                <a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
-                                <span class="icon-hint">Profile</span>
+                                    <div class="widget-header icontext">
+                                        <a href="{% url 'accounts:profile' %}" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
+                                        <span class="icon-hint mt-1">Dashboard</span>
+                                    </div>
+                                    <div class="widget-header icontext">
+                                        <a href="{% url 'customer:homepage' %}" class="icon icon-sm rounded-circle border"><i class="fa fa-home"></i></a>
+                                        <span class="icon-hint mt-1">Home</span>
+                                    </div>
                                 {% else %}
-                                <a href="{% url 'vendor:homepage' %}" class="icon icon-sm rounded-circle border"><i class="fa fa-home"></i></a>
-                                <span class="icon-hint">Home</span>
+                                    <div class="widget-header icontext">
+                                        <a href="{% url 'vendor:homepage' %}" class="icon icon-sm rounded-circle border"><i class="fa fa-home"></i></a>
+                                        <span class="icon-hint mt-1">Home</span>
+                                    </div>
                                 {% endif %}
 
                                 <div class="text">
@@ -111,7 +117,6 @@
                                     {% endif %}
 
                                 </div>
-                            </div>
                         </div> <!-- widgets-wrap.// -->
                     </div> <!-- col.// -->
                 </div> <!-- row.// -->

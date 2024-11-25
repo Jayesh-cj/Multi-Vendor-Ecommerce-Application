@@ -205,12 +205,14 @@ def checkout(request):
     cart = Cart.objects.get(user = request.user, is_paid = False)
     address = Contacts.objects.filter(user = request.user)
 
+    discount = cart.cupon.discount_price if cart.cupon else 00.00
+
   
     return render(request, 'customer/checkout.html', {
         'products' : cart,
         'total' : cart.total_price(),
-        'discount' : cart.cupon.discount_price if cart.cupon else 00.00,
-        'payable' : (cart.total_price() - cart.cupon.discount_price),
+        'discount' : discount,
+        'payable' : (cart.total_price() - int(discount)),
         'address' : address
     })
     

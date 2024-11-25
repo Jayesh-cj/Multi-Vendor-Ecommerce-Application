@@ -100,3 +100,9 @@ def account_login(request):
 def logout_user(request):
     logout(request)
     return redirect('accounts:login')
+
+
+def profile(request):
+    user = request.user
+    if user.user_type == 'Customer':
+        return render(request, 'customer/profile.html')

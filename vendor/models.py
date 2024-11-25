@@ -62,7 +62,7 @@ class Order(BaseModel):
         else:
             self.payable = self.total_amount
 
-        return super(Order, self).save(*args, **kwargs)
+        super(Order, self).save(*args, **kwargs)
     
     def get_order_total_price(self):
         order_total = Decimal(0.0)
