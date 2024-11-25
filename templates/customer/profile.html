@@ -5,64 +5,134 @@
 
 <link rel="stylesheet" href=" {% static '/css/user-profile.css' %} ">
 
-<div id="popup-form" class="popup">
+<div id="popup-form-profile" class="popup">
+    <div class="popup-content" style="margin-top: 5% !important;">
+        <span class="close">&times;</span>
+        <h3>Update Profile</h3>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'accounts:update' user.uid %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <div class="current-profile">
+                    <img id="profilePreview" src="{{ user.profile.url }}"
+                        style="width: 75px; height: 75px; border-radius: 50%;" alt="Profile Picture">
+                </div>
+                <input type="file" name="profile" value="{{ user.profile }}" class="form-control-file" id="inputProfilePhoto">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="form-control" id="inputFirstName4"
+                        placeholder="First Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="form-control" id="inputLastName" placeholder="Last Name">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="username" value="{{ user.username }}" class="form-control" id="inputUsername" placeholder="Username">
+            </div>
+
+            <div class="form-group">
+                <input type="email" name="email" value="{{ user.email }}" class="form-control" id="inputEmail" placeholder="Email id">
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="phone" value="{{ user.phone }}" class="form-control" id="inputLastName" placeholder="Phone Number">
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block"> Update </button>
+            </div> <!-- form-group// -->
+        </form>
+    </div>
+</div>
+
+<div id="popup-form-address" class="popup">
     <div class="popup-content">
-      <span class="close">&times;</span>
-  
-      <h3>Add Address</h3>
-  
-      <form method="POST" action="#">
-        {% csrf_token %}
-        <textarea name="txt_address" class="form-control" placeholder="Add Address" id=""></textarea>
-        <button type="submit" class="btn btn-primary mt-2 w-100">Add</button>
-      </form>
+        <span class="close">&times;</span>
+
+        <h3>Add Address</h3>
+
+        <form method="POST" action="#">
+            {% csrf_token %}
+            <textarea name="txt_address" class="form-control" placeholder="Add Address" id=""></textarea>
+            <button type="submit" class="btn btn-primary mt-2 w-100">Add</button>
+        </form>
     </div>
-  </div>
+</div>
 
-    <div class="container" id="up">
-        <div class="m-2" align="right">
-            <i class="btn btn-light fa-duotone fa-solid fa-pen-to-square"></i>
-        </div>
-        <div class="container-top p-3">
-            <img src="{{ request.user.profile.url }}" alt="">
-            <div class="user-details">
-                <span><p><b>Name : </b>{{ request.user.first_name }} {{ request.user.last_name }}</p></span>
-                <span><p><b>Username : </b> {{ request.user.username }} </p></span>
-                <span><p><b>Email : </b> {{ request.user.email }} </p></span>
-                <span><p><b>Phone : </b> {{ request.user.phone }} </p></span>
-            </div>
-        </div>
-        <div class="container-bottom">
-            <div class="action mr-4" align="right">
-                <button type="button" class="btn btn-link p-0 ml-2" data-toggle="modal"
-                    data-target="#addAddressModal" id="popupBtn">
-                    <i class="fas fa-plus-circle"></i>
-                </button>
-            </div>
-
-            <div class="user-address mt-1 p-3">
-                {% for address in request.user.user_contacts.all %}
-                    <div class="address">
-                        <div class="action mb-2">
-                            <i class="btn btn-light fa-duotone fa-solid fa-pen-to-square"></i>
-                            <i class="btn btn-light fa fa-trash"></i>
-                        </div>
-                        {{ address.address }}
-                    </div>
-                {% endfor %}
-            </div>
+<div class="container" id="up">
+    <div class="m-2" align="right">
+        <i class="btn btn-light fa-duotone fa-solid fa-pen-to-square" id="updateProfile"></i>
+    </div>
+    <div class="container-top p-3">
+        <img src="{{ user.profile.url }}" alt="Profile Picture">
+        <div class="user-details">
+            <span>
+                <p><b>Name : </b>{{ user.first_name }} {{ user.last_name }}</p>
+            </span>
+            <span>
+                <p><b>Username : </b> {{ user.username }} </p>
+            </span>
+            <span>
+                <p><b>Email : </b> {{ user.email }} </p>
+            </span>
+            <span>
+                <p><b>Phone : </b> {{ user.phone }} </p>
+            </span>
         </div>
     </div>
+    <div class="container-bottom">
+        <div class="action mr-4" align="right">
+            <button type="button" class="btn btn-link p-0 ml-2" data-toggle="modal" data-target="#addAddressModal"
+                id="popupBtn">
+                <i class="fas fa-plus-circle"></i>
+            </button>
+        </div>
 
-    <script>
-        $(document).ready(function () {
-          $('#popupBtn').click(function () {
-            $('#popup-form').fadeIn();
-          });
-      
-          $('.close').click(function () {
-            $('#popup-form').fadeOut();
-          });
+        <div class="user-address mt-1 p-3">
+            {% for address in user.user_contacts.all %}
+            <div class="address">
+                <div class="action mb-2">
+                    <i class="btn btn-light fa-duotone fa-solid fa-pen-to-square"></i>
+                    <i class="btn btn-light fa fa-trash"></i>
+                </div>
+                {{ address.address }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#updateProfile').click(function () {
+            $('#popup-form-profile').fadeIn();
+        })
+
+        $('#inputProfilePhoto').on('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#profilePreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
         });
-      </script>
+
+        $('#popupBtn').click(function () {
+            $('#popup-form-address').fadeIn();
+        });
+
+        $('.close').click(function () {
+            $('#popup-form-profile').fadeOut();
+            $('#popup-form-address').fadeOut();
+        });
+    });
+</script>
 {% endblock options %}

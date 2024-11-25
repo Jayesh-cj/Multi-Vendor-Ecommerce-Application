@@ -104,5 +104,26 @@ def logout_user(request):
 
 def profile(request):
     user = request.user
-    if user.user_type == 'Customer':
-        return render(request, 'customer/profile.html')
+    if user.is_authenticated:
+        if user.user_type == 'Customer':
+            return render(request, 'customer/profile.html', {
+                'user' : user
+            })
+    else:
+        return redirect('accounts:login')
+    
+
+def update_profile(request, uid):
+    user = User.objects.get(uid = uid)
+    profile = request.FILES.get('profile')
+
+    if profile:
+        user.profile = profile
+    
+    user.first_name = request.POST.get('first_name')
+    user.last_name = request.POST.get('last_name')
+    user.username = request.POST.get('username')
+    user.email = request.POST.get('email')
+    user.phone = request.POST.get('phone')
+    user.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
