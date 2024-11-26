@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from decimal import Decimal
 from django.shortcuts import redirect, render
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -319,3 +319,12 @@ def payment_validation(request):
         return JsonResponse({
             'error' : str(e)
         })
+
+
+def orders(request):
+    orders = Order.objects.prefetch_related(
+        Prefetch('items', queryset=OrderItem.objects.prefetch_related('product__product_images'))
+    ).all()
+    return render(request, 'customer/orders.html',{
+        'orders' : orders
+    })

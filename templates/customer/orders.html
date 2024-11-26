@@ -1,0 +1,59 @@
+{% extends "customer/dashboard.html" %}
+{% load static %}
+
+{% block options %}
+
+{% include "base/alert.html" %}
+
+<style>
+    .order-container {
+        display: flex;
+        border: 2px #5c58582c !important;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .order-container:hover {
+        transform: scale(1.05);
+    }
+
+    .product-details {
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+
+    .amount-details {
+        margin-left: 75px;
+    }
+</style>
+
+<div class="container">
+    {% for order in orders %}
+    <a href="#">
+        <div class="order-container mb-3">
+            <div class="product-image m-4">
+                <img src="{{ order.items.first.product.product_images.first.image.url }}" class="img-thumbnail mr-4"
+                    style="width: 100px; height: 100px;" alt="Product Image">
+            </div>
+            <div class="product-details">
+                <p>
+                    <b>Cupon : </b>{% if order.cupon %} {{ order.cupon.coupon_code}} {% else %} Not Applied {% endif %} <br>
+                    <b>Total Products : </b>{{ order.items.count }} <br>
+                    <b>Vendor : </b>{{ order.items.first.product.vendor }} <br>
+                    <b>Payment : </b>{{ order.payment.status }} <br>
+                    <b>Order Status : </b>{{ order.status }}
+                </p>
+            </div>
+            <div class="amount-details">
+                <p class="text-right">
+                   Total : ₹ {{ order.get_order_total_price.order_total }} <br>
+                   Discount : ₹ {{ order.get_order_total_price.discount }} <br>
+                   <b>Paid Amount : </b>₹ {{ order.get_order_total_price.final_price }}
+                </p>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -15,5 +15,6 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('add-address/', views.add_address, name='add_address'),
     path('create-razorepay-order/', views.create_razorepay_order, name='create_order'),
-    path('payment-validation/', views.payment_validation, name='payment_validation')
+    path('payment-validation/', views.payment_validation, name='payment_validation'),
+    path('orders/', views.orders, name='orders')
 ]

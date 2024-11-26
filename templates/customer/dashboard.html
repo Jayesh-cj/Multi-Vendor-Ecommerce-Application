@@ -67,8 +67,12 @@
         <div class="functions">
             <div class="container">
                 <ul>
-                    <li>Profile</li>
-                    <li>2</li>
+                    <li>
+                        <a href="{% url 'accounts:profile' %}">Profile</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'customer:orders' %}">Orders</a>
+                    </li>
                     <li>3</li>
                     <br>
                 </ul>
