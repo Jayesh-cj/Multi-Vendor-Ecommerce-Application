@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
@@ -126,4 +126,32 @@ def update_profile(request, uid):
     user.email = request.POST.get('email')
     user.phone = request.POST.get('phone')
     user.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def add_address(request, user):
+    user = User.objects.get(uid = user)
+    Contacts.objects.create(
+        user = user,
+        address = request.POST.get('txt_address')
+    )
+    messages.success(request, "New Address Added successfully.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def update_address(request):
+    address = Contacts.objects.get(
+        user = request.user,
+        id = request.POST.get('address_id')
+    )
+    address.address = request.POST.get('txt_address')
+    address.save()
+    messages.success(request, "Address Updated Successfully. ")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def delete_address(request, address):
+    address = Contacts.objects.get(id = address)
+    address.delete()
+    messages.success(request, "Address Deleted Successfully. ")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -3,6 +3,8 @@
 
 {% block options %}
 
+{% include "base/alert.html" %}
+
 <link rel="stylesheet" href=" {% static '/css/user-profile.css' %} ">
 
 <div id="popup-form-profile" class="popup">
@@ -50,16 +52,30 @@
     </div>
 </div>
 
-<div id="popup-form-address" class="popup">
+<div id="popup-form-add-address" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
 
         <h3>Add Address</h3>
 
-        <form method="POST" action="#">
+        <form method="POST" action="{% url 'accounts:add-address' user.uid %}">
             {% csrf_token %}
-            <textarea name="txt_address" class="form-control" placeholder="Add Address" id=""></textarea>
+            <textarea name="txt_address" class="form-control" rows="5" cols="15" required placeholder="Add Address" id=""></textarea>
             <button type="submit" class="btn btn-primary mt-2 w-100">Add</button>
+        </form>
+    </div>
+</div>
+
+<div id="popup-form-update-address" class="popup" style="display: none;">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <h3>Update Address</h3>
+
+        <form method="POST" action="{% url 'accounts:update_address' %}">
+            {% csrf_token %}
+            <input type="hidden" name="address_id" value="">
+            <textarea name="txt_address" class="form-control" rows="5" cols="15" placeholder="Update Address"></textarea>
+            <button type="submit" class="btn btn-primary mt-2 w-100">Update</button>
         </form>
     </div>
 </div>
@@ -85,6 +101,7 @@
             </span>
         </div>
     </div>
+
     <div class="container-bottom">
         <div class="action mr-4" align="right">
             <button type="button" class="btn btn-link p-0 ml-2" data-toggle="modal" data-target="#addAddressModal"
@@ -97,10 +114,10 @@
             {% for address in user.user_contacts.all %}
             <div class="address">
                 <div class="action mb-2">
-                    <i class="btn btn-light fa-duotone fa-solid fa-pen-to-square"></i>
-                    <i class="btn btn-light fa fa-trash"></i>
+                    <i class="btn btn-light fa-solid fa-pen-to-square updateAddressBtn" data-id="{{ address.id }}"></i>
+                    <i class="btn btn-light fa fa-trash deleteAddressBtn" data-id="{{ address.id }}"></i>
                 </div>
-                {{ address.address }}
+                <div class="address-text">{{ address.address }}</div>
             </div>
             {% endfor %}
         </div>
@@ -126,12 +143,32 @@
         });
 
         $('#popupBtn').click(function () {
-            $('#popup-form-address').fadeIn();
+            $('#popup-form-add-address').fadeIn();
         });
+
+        $('.updateAddressBtn').on('click', function () {
+            const addressId = $(this).data('id');
+            const addressText = $(this).closest('.address').find('.address-text').text().trim();
+            
+            $('#popup-form-update-address').fadeIn();
+            $('#popup-form-update-address textarea[name="txt_address"]').val(addressText);
+            $('#popup-form-update-address input[name="address_id"]').val(addressId);
+        });
+
+        $('.deleteAddressBtn').on('click', function () {
+            const addressId = $(this).data('id');
+            var status = confirm("Do you want to delete this address.")
+            if(status){
+                window.location.href = "{% url 'accounts:delete-address' 'id' %}".replace('id', addressId);
+            } else {
+                alert("Something went wrong ")
+            }
+        })
 
         $('.close').click(function () {
             $('#popup-form-profile').fadeOut();
-            $('#popup-form-address').fadeOut();
+            $('#popup-form-add-address').fadeOut();
+            $('#popup-form-update-address').fadeOut();
         });
     });
 </script>
