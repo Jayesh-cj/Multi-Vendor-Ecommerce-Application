@@ -1,0 +1,98 @@
+{% extends "customer/dashboard.html" %}
+{% load static %}
+
+{% block options %}
+
+{% include "base/alert.html" %}
+
+<style>
+    button:hover {
+        cursor: pointer;
+    }
+</style>
+
+<div class="container">
+    <h5 class="text-muted">Order {{ items.status }}</h5>
+    {% if not items.status == 'Cancelled' %}
+    <div class="action mb-3">
+        <button class="btn btn-danger" id="cancelBtn" data-order-id="{{ items.uid }}"
+        {% if items.status == 'Shipped' %}
+          disabled
+        {% endif %} >Cancel</button>
+    </div>
+    {% endif %}
+
+    <table class="table table-borderless table-shopping-cart">
+        <thead class="text-muted">
+            <tr class="small text-uppercase">
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>payment Status</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items.items.all %}
+            <tr class="border-bottom">
+                <td>
+                    <figure class="itemside">
+                        <div class="aside">
+                            {% if item.product.product_images.all %}
+                            <img src="{{ item.product.product_images.all.0.image.url }}" class="img-sm">
+                            {% endif %}
+                        </div>
+                        <figcaption class="info">
+                            <h5>{{ item.product.name }}</h5>
+                            <p>
+                                {{ item.product.description|truncatechars:50 }} <br>
+                                {% if item.product_color %}
+                                Color : {{ item.product_color.name }} <br>
+                                {% endif %}
+                                {% if item.product_size %}
+                                Size : {{ item.product_size.name }} <br>
+                                {% endif %}
+                                Category : {{ item.product.category.name }}
+                            </p>
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <h4>{{ item.quantity }}</h4>
+                </td>
+                <td>
+                    <h5>{{ items.payment.status }}</h5>
+                </td>
+                <td>
+                    <h6>{{ item.product.price }}</h6>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2"></td>
+                <td align="center">
+                    <p class="text-right">
+                        Total : ₹ {{ items.get_order_total_price.order_total }} <br>
+                        Discount : ₹ {{ items.get_order_total_price.discount }} <br>
+                        <b>Paid Amount : ₹ {{ items.get_order_total_price.final_price }} </b>
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#cancelBtn').click(function () {
+            const status = confirm("Do You Want To Cancel This Order.");
+            const uid = $(this).data('order-id')
+            const url = "{% url 'customer:update_status' 'uid' %}".replace('uid', uid)
+            console.log(url);
+
+            if (status) {
+                window.location.href = url
+            }
+        })
+    });
+</script>
+{% endblock %}

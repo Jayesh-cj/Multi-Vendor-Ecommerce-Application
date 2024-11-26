@@ -30,7 +30,7 @@
 
 <div class="container">
     {% for order in orders %}
-    <a href="#">
+    <a href="{% url 'customer:items' order.uid %}">
         <div class="order-container mb-3">
             <div class="product-image m-4">
                 <img src="{{ order.items.first.product.product_images.first.image.url }}" class="img-thumbnail mr-4"

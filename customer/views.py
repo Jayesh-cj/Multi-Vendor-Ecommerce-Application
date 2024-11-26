@@ -328,3 +328,18 @@ def orders(request):
     return render(request, 'customer/orders.html',{
         'orders' : orders
     })
+
+
+def order_items(request, order):
+    items = Order.objects.get(uid = order)
+    return render(request, 'customer/order_items.html', {
+        'items' : items
+    })
+
+
+def update_order_status(request, order):
+    order = Order.objects.get(uid = order)
+    order.status = 'Cancelled'
+    order.save()
+    messages.success(request, message="Order Has Beed Cancelled. ")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
