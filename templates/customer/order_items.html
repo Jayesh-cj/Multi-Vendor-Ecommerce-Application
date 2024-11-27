@@ -16,7 +16,7 @@
     {% if not items.status == 'Cancelled' %}
     <div class="action mb-3">
         <button class="btn btn-danger" id="cancelBtn" data-order-id="{{ items.uid }}"
-        {% if items.status == 'Shipped' %}
+        {% if not items.status == 'Pending' %}
           disabled
         {% endif %} >Cancel</button>
     </div>

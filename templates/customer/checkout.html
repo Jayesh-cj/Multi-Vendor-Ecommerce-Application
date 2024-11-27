@@ -4,6 +4,12 @@
 {% block content %}
 <link rel="stylesheet" href=" {% static '/css/checkout.css' %}">
 
+<style>
+    #addressInput:hover{
+        cursor: pointer;
+    }
+</style>
+
 {% include "base/alert.html" %}
 {% include "customer/add_address.html" %}
 
@@ -64,9 +70,9 @@
 
             {% for addres in address %}
 
-            <div class="address mt-3 p-2">
+            <div class="address mt-3 p-2" >
                 <input type="radio" name="address" {% if forloop.first %} checked {% endif %} value="{{ addres.id}}"
-                    id="">
+                    id="addressInput">
                 <p>{{ addres.address }}</p>
             </div>
             {% endfor %}

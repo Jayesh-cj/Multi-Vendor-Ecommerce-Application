@@ -26,6 +26,10 @@
     .amount-details {
         margin-left: 75px;
     }
+
+    a:hover {
+        color: black;
+    }
 </style>
 
 <div class="container">
@@ -40,7 +44,7 @@
                 <p>
                     <b>Cupon : </b>{% if order.cupon %} {{ order.cupon.coupon_code}} {% else %} Not Applied {% endif %} <br>
                     <b>Total Products : </b>{{ order.items.count }} <br>
-                    <b>Vendor : </b>{{ order.items.first.product.vendor }} <br>
+                    <b>Vendor : </b>{{ order.items.first.product.vendor.first_name }} {{ order.items.first.product.vendor.last_name }}<br>
                     <b>Payment : </b>{{ order.payment.status }} <br>
                     <b>Order Status : </b>{{ order.status }}
                 </p>

@@ -7,7 +7,7 @@
         <ul class="navbar-nav">
             {% for category in categories %}
                 <li class="nav-item mr-4">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{% url 'customer:products' %}">
                         {% if category.image %}
                             <img src="{{ category.image.url }}" alt="" width="50" height="50" class="mr-4" ><br>
                             {{ category }}

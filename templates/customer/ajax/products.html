@@ -4,10 +4,11 @@
 
         <div class="col-md-4">
             <figure class="card card-product-grid">
-                <div class="img-wrap"> <img id="productImg" src="{{ product.product_images.all.first.image.url }}">
+                <div class="img-wrap"> 
+                    <img id="productImg" src="{{ product.product_images.all.first.image.url }}">
                 </div>
                 <figcaption class="info-wrap border-top">
-                    <a href="#" class="title"> {{ product.name }} </a>
+                    <a href="{% url 'customer:product' product.slug %}" class="title"> {{ product.name }} </a>
                     <div class="price mt-2">${{ product.price }}</div> <!-- price-wrap.// -->
                 </figcaption>
             </figure> <!-- card // -->

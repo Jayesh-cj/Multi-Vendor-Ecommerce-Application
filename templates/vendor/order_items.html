@@ -65,10 +65,10 @@
             {% csrf_token %}
             <label for="order_status"><b>Order Status</b></label>
             <select name="order_status" id="" class="form-control">
+                <option value="">---Select---</option>
                 <option value="Pending">Pending</option>
                 <option value="Shipped">Shipped</option>
                 <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
             </select>
 
             <input type="hidden" id="order-id" value="{{ order.uid }}">
@@ -98,8 +98,12 @@
         <div class="top">
             <div></div>
             <h4 align="center"><u>Order Details</u></h4>
-            <i class="fa-duotone fa-solid fa-pen-to-square border-light" id="update-status"
-                style="cursor: pointer;"></i>
+            {% if order.status != "Cancelled" and order.status != "Delivered" %}
+                <i class="fa-duotone fa-solid fa-pen-to-square border-light" id="update-status"
+                    style="cursor: pointer;"></i>
+            {% else %}
+                <span></span>
+            {% endif %}
         </div>
         <div class="details mt-2">
             <p>
